@@ -1,0 +1,24 @@
+.max-capacity-ratio-slider .track {
+    visibility: hidden;
+}
+
+.max-capacity-ratio-slider .thumb {
+    -fx-background-color: transparent;
+    -fx-background-image :url("uielements/7guegog7-3.png");
+    -fx-pref-height: 5;
+    -fx-pref-width: 50;
+}
+
+.effective-cap-ratio-text-field {
+    -fx-background-color: transparent;
+    -fx-pref-width: 100;
+    -fx-text-fill: white;
+    -fx-padding: 0;
+}
+
+.effective-cap-text-field {
+    -fx-background-color: transparent;
+    -fx-pref-width: 130;
+    -fx-text-fill: white;
+    -fx-padding: 0;
+}

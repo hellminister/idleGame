@@ -1,0 +1,5 @@
+Iron 1
+Energy 0
+Air 0.00001
+Coal 0.01
+Steel 0.99

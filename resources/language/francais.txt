@@ -1,0 +1,2 @@
+GAME_TITLE Jeu Passe-Temps
+START_SCREEN_START_BUTTON Commencer
