@@ -1,11 +1,7 @@
 package idlegame.data;
 
-import idlegame.util.property.BigDecimalProperty;
-import idlegame.util.property.BigDecimalStringProperty;
-import idlegame.util.property.ReadOnlyBigDecimalProperty;
-import idlegame.util.property.StringableBigDecimalExpression;
+import idlegame.util.property.*;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
@@ -28,12 +24,19 @@ public class Resource {
     protected final DoubleProperty effectiveMaxCapacityRatio;
     protected final BooleanProperty effectiveRatioToggle;
     protected final BigDecimalBinding weightProperty;
+    protected boolean countStore = true;
+    protected boolean countRequest = true;
+    protected boolean invert = false;
+
+
+    protected final BigDecimalPerSecondProperty perSecond;
 
     public Resource(ResourceType type, BigDecimal maxCapacityInitial) {
         this.type = type;
         this.amount = new BigDecimalProperty(BigDecimal.ZERO);
         this.initialMaxCapacity = maxCapacityInitial;
         this.maxCapacity = new BigDecimalProperty(maxCapacityInitial);
+        perSecond = new BigDecimalPerSecondProperty();
 
         fillRatio = new DoubleBinding() {
             {
@@ -102,6 +105,16 @@ public class Resource {
                 return asString;
             }
         };
+        type.register(this);
+    }
+
+    public void moveTick(){
+        perSecond.moveTick();
+    }
+
+
+    public BigDecimalPerSecondProperty perSecondProperty() {
+        return perSecond;
     }
 
     /**
@@ -110,19 +123,26 @@ public class Resource {
      * @return the amount exceeding max capacity
      */
     public BigDecimal store(BigDecimal toStore){
+        BigDecimal excess;
         if (isAtMaxCapacity()){
-            return toStore;
-        }
-
-        BigDecimal sum = amount.get().add(toStore);
-
-        if (sum.compareTo(effectiveMaxCapacity.get()) <= 0){
-            amount.setValue(sum);
-            return BigDecimal.ZERO;
+            excess = toStore;
         } else {
-            amount.setValue(effectiveMaxCapacity.getValue());
-            return sum.subtract(effectiveMaxCapacity.get());
+
+            BigDecimal sum = amount.get().add(toStore);
+
+            if (sum.compareTo(effectiveMaxCapacity.get()) <= 0) {
+                amount.setValue(sum);
+                excess = BigDecimal.ZERO;
+            } else {
+                amount.setValue(effectiveMaxCapacity.getValue());
+                excess = sum.subtract(effectiveMaxCapacity.get());
+            }
         }
+        BigDecimal actualStore = toStore.subtract(excess);
+        if (countStore) {
+            perSecond.add(invert ? actualStore.negate() : actualStore);
+        }
+        return excess;
     }
 
     public boolean isAtMaxCapacity() {
@@ -139,20 +159,26 @@ public class Resource {
      * @return actual amount retrieved
      */
     public BigDecimal request(BigDecimal requested){
+        BigDecimal retrieved;
+
         if (isEmpty()){
-            return BigDecimal.ZERO;
-        }
-
-        BigDecimal balance = amount.get().subtract(requested);
-
-        if (balance.compareTo(BigDecimal.ZERO) >= 0){
-            amount.setValue(balance);
-            return requested;
+            retrieved =  BigDecimal.ZERO;
         } else {
-            balance = amount.get();
-            amount.setValue(BigDecimal.ZERO);
-            return balance;
+            BigDecimal balance = amount.get().subtract(requested);
+
+            if (balance.compareTo(BigDecimal.ZERO) >= 0) {
+                amount.setValue(balance);
+                retrieved =  requested;
+            } else {
+                balance = amount.get();
+                amount.setValue(BigDecimal.ZERO);
+                retrieved = balance;
+            }
         }
+        if (countRequest){
+            perSecond.add(invert ? retrieved : retrieved.negate());
+        }
+        return retrieved;
     }
 
     public boolean isEmpty() {
@@ -199,5 +225,4 @@ public class Resource {
         return weightProperty;
     }
 
-    public static abstract class BigDecimalBinding extends ObjectBinding<BigDecimal> implements StringableBigDecimalExpression{}
 }

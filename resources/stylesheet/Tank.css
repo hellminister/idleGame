@@ -25,6 +25,13 @@
     -fx-font-size: 20;
 }
 
+.tank-delta-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 10;
+}
+
 .tank-fill-bar {
     -fx-pref-height: 40;
     -fx-min-height: 40;

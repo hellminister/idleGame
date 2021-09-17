@@ -9,9 +9,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ResourceType {
 
@@ -49,13 +47,23 @@ public class ResourceType {
     private final BigDecimal initWeightPerUnit;
     private final BigDecimalProperty weightPerUnit;
 
+    private final Set<Resource> tanks;
+
 
     private ResourceType(String name, BigDecimal weightPerUnit) {
         this.name = name;
         initWeightPerUnit = weightPerUnit;
         this.weightPerUnit = new BigDecimalProperty(weightPerUnit);
+        tanks = new HashSet<>();
     }
 
+    public static Map<String, ResourceType> getAll() {
+        return resourceTypes;
+    }
+
+    public void register(Resource tank){
+        tanks.add(tank);
+    }
 
     public String getName() {
         return name;
@@ -65,4 +73,7 @@ public class ResourceType {
         return weightPerUnit;
     }
 
+    public Set<Resource> getTanks() {
+        return tanks;
+    }
 }

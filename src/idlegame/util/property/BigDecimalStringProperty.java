@@ -26,6 +26,6 @@ public class BigDecimalStringProperty extends StringBinding {
      */
     @Override
     protected String computeValue() {
-        return formatter.format(value.getValue()).replaceAll("E", " E");
+        return formatter.format(value.getValue()).replaceAll("E", "e");
     }
 }

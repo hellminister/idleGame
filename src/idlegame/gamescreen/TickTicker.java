@@ -2,6 +2,8 @@ package idlegame.gamescreen;
 
 import idlegame.data.GameData;
 import idlegame.data.Producer;
+import idlegame.data.Resource;
+import idlegame.data.ResourceType;
 import javafx.application.Platform;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -35,6 +37,8 @@ public class TickTicker {
         private int tick = 1;
         private long lastTime = 0;
         private long tillSecond = 0;
+        private long timePerSecond = 0;
+
         private int acted = 0;
 
         public Ticker(GameData data){
@@ -61,11 +65,12 @@ public class TickTicker {
                     tillSecond += tickTime;
                     if (tillSecond >= SECOND_IN_NANO){
                         System.out.println(tick + " ticks in a second of " + tillSecond + " nanoSecond");
-                        System.out.println("Acted " + acted + " times");
+                        System.out.println("Acted " + acted + " times. Tick Average time = " + (timePerSecond / 10) / 1000000.0 + " milliseconds.");
                         tickTime = 0;
                         tick = 1;
                         acted = 0;
                         tillSecond = 0;
+                        timePerSecond = 0;
                     }
                 }
                 lastTime = now;
@@ -74,6 +79,9 @@ public class TickTicker {
                     acted++;
 
                     long start = System.nanoTime();
+                    for (ResourceType r: ResourceType.getAll().values()) {
+                        r.getTanks().forEach(Resource::moveTick);
+                    }
 
                     gameData.getMyShip().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
                             .forEach(Producer::generate);
@@ -81,6 +89,8 @@ public class TickTicker {
                     long end = System.nanoTime();
 
                     long dur = end - start;
+
+                    timePerSecond += dur;
 
                     System.out.println("Took " + dur/1000000f + " ms to run.");
 

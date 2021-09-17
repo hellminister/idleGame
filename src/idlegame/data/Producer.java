@@ -5,7 +5,6 @@ import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -26,8 +25,8 @@ public class Producer {
 
     public Producer(String name, String description, Set<Resource> produces, Set<Resource> consumes, Resourceful storage) {
         productionRate = new BigDecimalProperty(BigDecimal.valueOf(1.0));
-        produced = produces.stream().collect(Collectors.toMap(Resource::getName, r -> new ProdResource(r,productionRate)));
-        consumed = consumes.stream().collect(Collectors.toMap(Resource::getName, r -> new ProdResource(r,productionRate)));
+        produced = produces.stream().collect(Collectors.toMap(Resource::getName, r -> new ProdResource(r,productionRate, false, true, true)));
+        consumed = consumes.stream().collect(Collectors.toMap(Resource::getName, r -> new ProdResource(r,productionRate, true, false, true)));
         this.name = name;
         this.description = description;
         this.storage = storage;
@@ -120,13 +119,16 @@ public class Producer {
 
         private final ProductionBinding actualProduction;
 
-        public ProdResource(ResourceType type, BigDecimal maxCapacity, ReadOnlyBigDecimalProperty prodRate) {
+        public ProdResource(ResourceType type, BigDecimal maxCapacity, ReadOnlyBigDecimalProperty prodRate, boolean countStore, boolean countRequest, boolean invert) {
             super(type, maxCapacity);
+            this.countRequest = countRequest;
+            this.countStore = countStore;
+            this.invert = invert;
             actualProduction = new ProductionBinding(this.getMaxCapacity(), prodRate);
         }
 
-        private ProdResource(Resource r, BigDecimalProperty productionRate) {
-            this(r.getType(), r.maxCapacity.getValue(), productionRate);
+        private ProdResource(Resource r, BigDecimalProperty productionRate, boolean countStore, boolean countRequest, boolean invert) {
+            this(r.getType(), r.maxCapacity.getValue(), productionRate, countStore, countRequest, invert);
         }
 
 

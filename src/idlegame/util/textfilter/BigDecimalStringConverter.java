@@ -23,7 +23,7 @@ public class BigDecimalStringConverter extends StringConverter<BigDecimal> {
      */
     @Override
     public String toString(BigDecimal object) {
-        return numberFormat.format(object);
+        return numberFormat.format(object).replaceAll("E", "e");
     }
 
     /**

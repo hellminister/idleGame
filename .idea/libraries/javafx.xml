@@ -1,20 +1,20 @@
 <component name="libraryTable">
   <library name="javafx">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/lib" />
+      <root url="file://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/lib" />
     </CLASSES>
     <JAVADOC>
-      <root url="file://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/openjfx-16-javadoc.zip" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/openjfx-17.0.0.1-javadoc.zip!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/src.zip!/javafx.base" />
-      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/src.zip!/javafx.controls" />
-      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/src.zip!/javafx.fxml" />
-      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/src.zip!/javafx.graphics" />
-      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/src.zip!/javafx.media" />
-      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/src.zip!/javafx.swing" />
-      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/src.zip!/javafx.web" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/src.zip!/javafx.base" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/src.zip!/javafx.controls" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/src.zip!/javafx.fxml" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/src.zip!/javafx.graphics" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/src.zip!/javafx.media" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/src.zip!/javafx.swing" />
+      <root url="jar://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/src.zip!/javafx.web" />
     </SOURCES>
-    <jarDirectory url="file://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-16/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../../../../Program Files/Java/javafx-sdk-17.0.0.1/lib" recursive="false" />
   </library>
 </component>

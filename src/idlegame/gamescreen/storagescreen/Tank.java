@@ -101,16 +101,24 @@ public class Tank extends HBox {
         weightLabel.textProperty().bind(tank.getWeight().asStringProperty());
         weightLabel.getStyleClass().add("tank-value-label");
 
+        Label deltaLabel = new Label();
+        deltaLabel.textProperty().bind(tank.perSecondProperty().asStringProperty().concat("/s"));
+        deltaLabel.getStyleClass().add("tank-delta-label");
+
 
         layoutA.getChildren().addAll(name, fillRatio, effectiveSlider, amountNameLabel, maxCapNameLabel, effectiveNameLabel,
-                amountLabel, maxCapLabel, effectiveCapRatio, effectiveCap, ratioToggle, effectiveToggle, weightLabel, weightNameLabel);
+                amountLabel, maxCapLabel, effectiveCapRatio, effectiveCap, ratioToggle, effectiveToggle, weightLabel, deltaLabel, weightNameLabel);
 
 
         AnchorPane.setTopAnchor(amountNameLabel, 50.0);
         AnchorPane.setLeftAnchor(amountNameLabel, 50.0);
 
-        AnchorPane.setTopAnchor(amountLabel, 75.0);
+        AnchorPane.setTopAnchor(amountLabel, 70.0);
         AnchorPane.setLeftAnchor(amountLabel, 50.0);
+
+
+        AnchorPane.setTopAnchor(deltaLabel, 95.0);
+        AnchorPane.setLeftAnchor(deltaLabel, 50.0);
 
         AnchorPane.setTopAnchor(maxCapNameLabel, 110.0);
         AnchorPane.setLeftAnchor(maxCapNameLabel, 50.0);
