@@ -1,0 +1,55 @@
+.producer-ui-main-box {
+    -fx-background-color: black;
+    -fx-border-width: 2;
+    -fx-border-color: white;
+}
+
+.producer-ui-title-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 30;
+}
+
+.producer-ui-description-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 18;
+    -fx-max-width: 375;
+    -fx-max-height: 50;
+    -fx-wrap-text: true;
+}
+
+.producer-ui-section-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+}
+
+.producer-ui-resource-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+}
+
+.producer-ui-resource-fill-bar {
+    -fx-pref-height: 20;
+    -fx-min-height: 20;
+    -fx-max-height: 20;
+    -fx-pref-width: 175;
+    -fx-min-width: 175;
+    -fx-max-width: 175;
+    -fx-accent: white;
+    -fx-control-inner-background: black;
+}
+
+.producer-ui-production-rate-text-field {
+    -fx-alignment: center-right;
+    -fx-background-color: transparent;
+    -fx-pref-width: 80;
+    -fx-text-fill: white;
+    -fx-padding: 0;
+}

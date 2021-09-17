@@ -1,18 +1,19 @@
 package idlegame.data;
 
+import java.util.Set;
+
 /**
  * this class is the player character whether he is spaceship, sea ship, ether ship, etc.
  */
-public class Ship {
-    private final ResourceTanks tanks;
-
-    private Location currentlyAt;
+public class Ship extends Resourceful{
 
     public Ship(ResourceTanks tanks) {
-        this.tanks = tanks;
+        super(tanks);
     }
 
-    public ResourceTanks getTanks(){
-        return tanks;
+    public void transferResource(ResourceType type){
+
     }
+
+
 }

@@ -1,49 +1,35 @@
 package idlegame.gamescreen.storagescreen;
 
 import idlegame.data.Resource;
-import javafx.geometry.Orientation;
+import idlegame.util.textfilter.BigDecimalStringConverter;
+import idlegame.util.textfilter.BigDecimalTextFilter;
+import idlegame.util.textfilter.TextDoublePercentageFilter;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.util.StringConverter;
 import javafx.util.converter.PercentageStringConverter;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.function.UnaryOperator;
 
-class Tank extends HBox {
+public class Tank extends HBox {
     protected Resource tank;
 
     public Tank(Resource tank) {
 
         this.tank = tank;
-        setStyle("-fx-background-color: black; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-color: white");
+        getStyleClass().add("tank-main-box");
         AnchorPane layoutA = new AnchorPane();
         getChildren().add(layoutA);
 
         Label name = new Label(tank.getName());
-        name.setTextFill(Color.WHITE);
-        name.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 30));
-
+        name.getStyleClass().add("tank-title-label");
 
         var fillRatioBar = new ProgressBar();
         fillRatioBar.progressProperty().bind(tank.getFillRatio());
+        fillRatioBar.getStyleClass().add("tank-fill-bar");
         fillRatioBar.setRotate(-90);
-        fillRatioBar.setStyle("-fx-accent: white; -fx-control-inner-background: black");
-
-        // because of rotation height is width and width is height
-        fillRatioBar.setPrefSize(250, 40);
-        fillRatioBar.setMinSize(250, 40);
-        fillRatioBar.setMaxSize(250, 40);
 
         var fillRatio = new Group();
         fillRatio.getChildren().add(fillRatioBar);
@@ -52,123 +38,49 @@ class Tank extends HBox {
         effectiveSlider.setMin(0.0);
         effectiveSlider.setMax(1.0);
         effectiveSlider.valueProperty().bindBidirectional(tank.getEffectiveMaxCapacityRatio());
-        effectiveSlider.setOrientation(Orientation.VERTICAL);
-
-        effectiveSlider.setPrefSize(0, 249);
-        effectiveSlider.setMinSize(0, 249);
-        effectiveSlider.setMaxSize(0, 249);
-
-        effectiveSlider.getStyleClass().add("max-capacity-ratio-slider");
+        effectiveSlider.getStyleClass().add("tank-max-capacity-ratio-slider");
 
         Label amountNameLabel = new Label("Amount");
-        amountNameLabel.setTextFill(Color.WHITE);
-        amountNameLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        amountNameLabel.getStyleClass().add("tank-section-label");
 
         Label amountLabel = new Label();
         amountLabel.textProperty().bind(tank.getAmount().asStringProperty());
-        amountLabel.setTextFill(Color.WHITE);
-        amountLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        amountLabel.getStyleClass().add("tank-value-label");
 
         Label maxCapNameLabel = new Label("Maximum");
-        maxCapNameLabel.setTextFill(Color.WHITE);
-        maxCapNameLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        maxCapNameLabel.getStyleClass().add("tank-section-label");
+
 
         Label maxCapLabel = new Label();
         maxCapLabel.textProperty().bind(tank.getMaxCapacity().asStringProperty());
-        maxCapLabel.setTextFill(Color.WHITE);
-        maxCapLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        maxCapLabel.getStyleClass().add("tank-value-label");
 
         Label effectiveNameLabel = new Label("Caped At");
-        effectiveNameLabel.setTextFill(Color.WHITE);
-        effectiveNameLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        effectiveNameLabel.getStyleClass().add("tank-section-label");
 
         TextField effectiveCapRatio = new TextField();
         effectiveCapRatio.setEditable(true);
 
-        UnaryOperator<TextFormatter.Change> doubleFilter = change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches("[0-9]{1,13}(,[0-9]*)?%")) {
-                double d = Double.parseDouble(newText.replaceAll("%", "").replaceAll(",", "."));
-                if (d > 100) {
-                    return null;
-                }
-                return change;
-            }
-            return null;
-        };
-
         TextFormatter<Number> ratioTextFormatter = new TextFormatter<>(new PercentageStringConverter(new DecimalFormat("##0.0###%")),
                 tank.getEffectiveMaxCapacityRatio().doubleValue(),
-                doubleFilter);
-        effectiveCapRatio.setTextFormatter(ratioTextFormatter);
+                new TextDoublePercentageFilter(d -> d <= 100));
         ratioTextFormatter.valueProperty().bindBidirectional(tank.getEffectiveMaxCapacityRatio());
 
-        effectiveCapRatio.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        effectiveCapRatio.getStyleClass().add("effective-cap-ratio-text-field");
+        effectiveCapRatio.setTextFormatter(ratioTextFormatter);
+        effectiveCapRatio.getStyleClass().addAll("tank-effective-cap-ratio-text-field", "tank-value-label");
 
 
         TextField effectiveCap = new TextField();
         effectiveCap.setEditable(true);
 
-        UnaryOperator<TextFormatter.Change> bigDecimalFilter = change -> {
-            String newText = change.getControlNewText();
-            if (newText.matches("[0-9](,[0-9]*)?E-?[0-9]([0-9]*)?")) {
-                BigDecimal bd = new BigDecimal(newText.replaceAll(",", "."));
-                if (bd.compareTo(tank.getMaxCapacity().get()) >= 1) {
-                    return null;
-                }
-                return change;
-            }
-            if (newText.matches("[0-9]([0-9]*)?(,[0-9]*)?")) {
-                BigDecimal bd = new BigDecimal(newText.replaceAll(",", "."));
-                if (bd.compareTo(tank.getMaxCapacity().get()) >= 1) {
-                    return null;
-                }
-                return change;
-            }
-            return null;
-        };
-
-        TextFormatter<BigDecimal> effectiveTextFormatter = new TextFormatter<>(new StringConverter<>() {
-
-            private final NumberFormat numberFormat = new DecimalFormat("0.000###E0");
-
-            /**
-             * Converts the object provided into its string form.
-             * Format of the returned string is defined by the specific converter.
-             *
-             * @param object the object of type {@code T} to convert
-             * @return a string representation of the object passed in.
-             */
-            @Override
-            public String toString(BigDecimal object) {
-                return numberFormat.format(object);
-            }
-
-            /**
-             * Converts the string provided into an object defined by the specific converter.
-             * Format of the string and type of the resulting object is defined by the specific converter.
-             *
-             * @param string the {@code String} to convert
-             * @return an object representation of the string passed in.
-             */
-            @Override
-            public BigDecimal fromString(String string) {
-                string = string.replaceAll(",", ".");
-                System.out.println(string);
-                BigDecimal bigDecimal = new BigDecimal(string);
-                System.out.println(bigDecimal);
-                return bigDecimal;
-            }
-        },
+        TextFormatter<BigDecimal> effectiveTextFormatter = new TextFormatter<>(new BigDecimalStringConverter(new DecimalFormat("0.000###E0")),
                 tank.getEffectiveMaxCapacity().getValue(),
-                bigDecimalFilter);
+                new BigDecimalTextFilter(bd -> bd.compareTo(tank.getMaxCapacity().get()) < 1));
 
         effectiveCap.setTextFormatter(effectiveTextFormatter);
         effectiveTextFormatter.valueProperty().bindBidirectional(tank.getEffectiveMaxCapacity());
 
-        effectiveCap.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        effectiveCap.getStyleClass().add("effective-cap-text-field");
+        effectiveCap.getStyleClass().addAll("tank-effective-cap-text-field", "tank-value-label");
 
         ToggleGroup toggleGroup = new ToggleGroup();
 
@@ -183,13 +95,12 @@ class Tank extends HBox {
         }
 
         Label weightNameLabel = new Label("Weight");
-        weightNameLabel.setTextFill(Color.WHITE);
-        weightNameLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        weightNameLabel.getStyleClass().add("tank-section-label");
 
         Label weightLabel = new Label();
         weightLabel.textProperty().bind(tank.getWeight().asStringProperty());
-        weightLabel.setTextFill(Color.WHITE);
-        weightLabel.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        weightLabel.getStyleClass().add("tank-value-label");
+
 
         layoutA.getChildren().addAll(name, fillRatio, effectiveSlider, amountNameLabel, maxCapNameLabel, effectiveNameLabel,
                 amountLabel, maxCapLabel, effectiveCapRatio, effectiveCap, ratioToggle, effectiveToggle, weightLabel, weightNameLabel);
@@ -225,7 +136,7 @@ class Tank extends HBox {
         AnchorPane.setTopAnchor(weightNameLabel, 245.0);
         AnchorPane.setLeftAnchor(weightNameLabel, 50.0);
 
-        AnchorPane.setTopAnchor(weightLabel, 270.0);
+        AnchorPane.setTopAnchor(weightLabel, 267.0);
         AnchorPane.setLeftAnchor(weightLabel, 50.0);
 
         AnchorPane.setTopAnchor(name, 2.0);

@@ -50,6 +50,10 @@ public class Main extends Application {
 
     }
 
+    public void stop(){
+        gameScreen.stop();
+    }
+
     public static void main(String[] args) {
         Main.launch(args);
     }
@@ -58,6 +62,7 @@ public class Main extends Application {
         stage.setScene(gameScreen);
         stage.setMaximized(false);
         stage.setMaximized(true);
+        gameScreen.start();
     }
 
     public GameData getGameData() {

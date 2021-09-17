@@ -1,4 +1,4 @@
-package idlegame.util;
+package idlegame.util.property;
 
 import javafx.beans.property.ReadOnlyProperty;
 

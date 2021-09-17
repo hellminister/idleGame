@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 public final class Util {
     private Util(){}
 
-    public static String getFileCSSPathString(String s) {
+    public static String getFilePathString(String s) {
         try {
             return Paths.get(s).toUri().toURL().toExternalForm();
         } catch (MalformedURLException e) {

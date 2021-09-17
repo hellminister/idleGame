@@ -1,7 +1,7 @@
 package idlegame.data;
 
-import idlegame.util.BigDecimalProperty;
-import idlegame.util.ReadOnlyBigDecimalProperty;
+import idlegame.util.property.BigDecimalProperty;
+import idlegame.util.property.ReadOnlyBigDecimalProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -16,11 +16,13 @@ import java.util.HashMap;
 
 public class GameScreen extends Scene {
 
-    private static final String SLIDER_STYLE_SHEET_PATH = Util.getFileCSSPathString("resources/stylesheet/storageScreen.css");
+    private static final String TANK_STYLE_SHEET_PATH = Util.getFilePathString("resources/stylesheet/Tank.css");
+    private static final String PRODUCERUI_STYLE_SHEET_PATH = Util.getFilePathString("resources/stylesheet/ProducerUI.css");
 
     private final HashMap<String, Pane> views;
 
-
+ //   private final AnimationTimer ticking;
+    private final TickTicker ticking;
 
     /**
      * Creates a Scene for a specific root Node.
@@ -31,7 +33,7 @@ public class GameScreen extends Scene {
     public GameScreen(Main main) {
         super(new BorderPane());
 
-        getStylesheets().add(SLIDER_STYLE_SHEET_PATH);
+        getStylesheets().addAll(TANK_STYLE_SHEET_PATH, PRODUCERUI_STYLE_SHEET_PATH);
 
         var root = (BorderPane)getRoot();
         root.setStyle("-fx-background-color: black");
@@ -54,6 +56,9 @@ public class GameScreen extends Scene {
 
         root.setLeft(categories);
         views.get("Storage").setVisible(true);
+
+       // ticking = new GameAnimationTimer(main.getGameData());
+        ticking = new TickTicker(main.getGameData());
     }
 
     private Button createButton(String name, Pane view, StackPane center){
@@ -68,6 +73,14 @@ public class GameScreen extends Scene {
     private void switchTo(String viewName) {
         views.values().forEach(v -> v.setVisible(false));
         views.get(viewName).setVisible(true);
+    }
+
+    public void start() {
+        ticking.start();
+    }
+
+    public void stop() {
+        ticking.stop();
     }
 
 }

@@ -1,0 +1,72 @@
+.tank-main-box {
+    -fx-background-color: black;
+    -fx-border-width: 2;
+    -fx-border-color: white;
+}
+
+.tank-title-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 30;
+}
+
+.tank-section-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 15;
+}
+
+.tank-value-label {
+    -fx-text-fill: white;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+}
+
+.tank-fill-bar {
+    -fx-pref-height: 40;
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+    -fx-pref-width: 250;
+    -fx-min-width: 250;
+    -fx-max-width: 250;
+    -fx-accent: white;
+    -fx-control-inner-background: black;
+}
+
+.tank-max-capacity-ratio-slider {
+    -fx-pref-height: 249;
+    -fx-min-height: 249;
+    -fx-max-height: 249;
+    -fx-pref-width: 0;
+    -fx-min-width: 0;
+    -fx-max-width: 0;
+    -fx-orientation: vertical;
+}
+
+.tank-max-capacity-ratio-slider .track {
+    visibility: hidden;
+}
+
+.tank-max-capacity-ratio-slider .thumb {
+    -fx-background-color: transparent;
+    -fx-background-image :url("uielements/7guegog7-3.png");
+    -fx-pref-height: 5;
+    -fx-pref-width: 50;
+}
+
+.tank-effective-cap-ratio-text-field {
+    -fx-background-color: transparent;
+    -fx-pref-width: 100;
+    -fx-text-fill: white;
+    -fx-padding: 0;
+}
+
+.tank-effective-cap-text-field {
+    -fx-background-color: transparent;
+    -fx-pref-width: 130;
+    -fx-text-fill: white;
+    -fx-padding: 0;
+}

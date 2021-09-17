@@ -1,14 +1,15 @@
 package idlegame.data;
 
-import idlegame.util.BigDecimalProperty;
-import idlegame.util.BigDecimalStringProperty;
-import idlegame.util.ReadOnlyBigDecimalProperty;
-import idlegame.util.StringableBigDecimalExpression;
+import idlegame.util.property.BigDecimalProperty;
+import idlegame.util.property.BigDecimalStringProperty;
+import idlegame.util.property.ReadOnlyBigDecimalProperty;
+import idlegame.util.property.StringableBigDecimalExpression;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Objects;
@@ -41,7 +42,7 @@ public class Resource {
             }
             @Override
             protected double computeValue() {
-                return amount.get().divide(maxCapacity.get()).doubleValue();
+                return amount.get().divide(maxCapacity.get(), 10, RoundingMode.HALF_UP).doubleValue();
             }
         };
 
@@ -56,7 +57,7 @@ public class Resource {
                 if (effectiveMaxCapacity.get().compareTo(newV) >= 1){
                     effectiveMaxCapacity.set(newV);
                 }
-                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get().divide(newV).doubleValue());
+                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get().divide(newV, 10, RoundingMode.HALF_UP).doubleValue());
             }
 
             if (amount.get().compareTo(effectiveMaxCapacity.get())>= 0){
@@ -76,7 +77,7 @@ public class Resource {
 
         effectiveMaxCapacity.addListener((ratio, oldV, newV) ->{
             if (!Objects.equals(oldV, newV)){
-                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get().divide(maxCapacity.get()).doubleValue());
+                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get().divide(maxCapacity.get(), 10, RoundingMode.HALF_UP).doubleValue());
                 if (amount.get().compareTo(effectiveMaxCapacity.get())>= 0){
                     amount.set(effectiveMaxCapacity.get());
                 }
@@ -101,10 +102,6 @@ public class Resource {
                 return asString;
             }
         };
-
-
-        //store(BigDecimal.valueOf(Math.random()*1000));
-        store(BigDecimal.valueOf(1000));
     }
 
     /**
@@ -169,10 +166,6 @@ public class Resource {
     public String getName(){
         return type.getName();
     }
-
- //   public BigDecimal getWeight(){
- //       return amount.get().multiply(weightMultiplier.get());
- //   }
 
     public ReadOnlyBigDecimalProperty getAmount() {
         return amount;

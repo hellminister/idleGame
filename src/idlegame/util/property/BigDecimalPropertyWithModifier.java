@@ -1,9 +1,8 @@
-package idlegame.util;
+package idlegame.util.property;
 
 import javafx.beans.binding.ObjectBinding;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Set;
 
 public class BigDecimalPropertyWithModifier extends ObjectBinding<BigDecimal> {
