@@ -1,6 +1,7 @@
 package idlegame.gamescreen.storagescreen;
 
 import idlegame.data.Resource;
+import idlegame.language.Localize;
 import idlegame.util.textfilter.BigDecimalStringConverter;
 import idlegame.util.textfilter.BigDecimalTextFilter;
 import idlegame.util.textfilter.TextDoublePercentageFilter;
@@ -23,7 +24,8 @@ public class Tank extends HBox {
         AnchorPane layoutA = new AnchorPane();
         getChildren().add(layoutA);
 
-        Label name = new Label(tank.getName());
+        Label name = new Label();
+        name.textProperty().bind(tank.getName());
         name.getStyleClass().add("tank-title-label");
 
         var fillRatioBar = new ProgressBar();
@@ -40,14 +42,16 @@ public class Tank extends HBox {
         effectiveSlider.valueProperty().bindBidirectional(tank.getEffectiveMaxCapacityRatio());
         effectiveSlider.getStyleClass().add("tank-max-capacity-ratio-slider");
 
-        Label amountNameLabel = new Label("Amount");
+        Label amountNameLabel = new Label();
+        amountNameLabel.textProperty().bind(Localize.get("idt_TANK_AMOUNT_LABEL"));
         amountNameLabel.getStyleClass().add("tank-section-label");
 
         Label amountLabel = new Label();
         amountLabel.textProperty().bind(tank.getAmount().asStringProperty());
         amountLabel.getStyleClass().add("tank-value-label");
 
-        Label maxCapNameLabel = new Label("Maximum");
+        Label maxCapNameLabel = new Label();
+        maxCapNameLabel.textProperty().bind(Localize.get("idt_TANK_MAXIMUM_CAP_LABEL"));
         maxCapNameLabel.getStyleClass().add("tank-section-label");
 
 
@@ -55,7 +59,8 @@ public class Tank extends HBox {
         maxCapLabel.textProperty().bind(tank.getMaxCapacity().asStringProperty());
         maxCapLabel.getStyleClass().add("tank-value-label");
 
-        Label effectiveNameLabel = new Label("Caped At");
+        Label effectiveNameLabel = new Label();
+        effectiveNameLabel.textProperty().bind(Localize.get("idt_TANK_EFFECTIVE_CAP_LABEL"));
         effectiveNameLabel.getStyleClass().add("tank-section-label");
 
         TextField effectiveCapRatio = new TextField();
@@ -94,7 +99,8 @@ public class Tank extends HBox {
             effectiveToggle.setSelected(true);
         }
 
-        Label weightNameLabel = new Label("Weight");
+        Label weightNameLabel = new Label();
+        weightNameLabel.textProperty().bind(Localize.get("idt_TANK_WEIGHT_LABEL"));
         weightNameLabel.getStyleClass().add("tank-section-label");
 
         Label weightLabel = new Label();

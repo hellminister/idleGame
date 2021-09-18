@@ -1,11 +1,13 @@
 package idlegame.data;
 
 
+import idlegame.language.Localize;
 import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import java.math.BigDecimal;
@@ -14,21 +16,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Producer {
-    private final String name;
-    private final String description;
+    private final ReadOnlyStringProperty name;
+    private final ReadOnlyStringProperty description;
 
-    private final Map<String, ProdResource> produced;
-    private final Map<String, ProdResource> consumed;
+    private final Map<ResourceType, ProdResource> produced;
+    private final Map<ResourceType, ProdResource> consumed;
     private final Resourceful storage;
     private final BigDecimalProperty productionRate;
     private final BooleanProperty unlocked;
 
     public Producer(String name, String description, Set<Resource> produces, Set<Resource> consumes, Resourceful storage) {
         productionRate = new BigDecimalProperty(BigDecimal.valueOf(1.0));
-        produced = produces.stream().collect(Collectors.toMap(Resource::getName, r -> new ProdResource(r,productionRate, false, true, true)));
-        consumed = consumes.stream().collect(Collectors.toMap(Resource::getName, r -> new ProdResource(r,productionRate, true, false, true)));
-        this.name = name;
-        this.description = description;
+        produced = produces.stream().collect(Collectors.toMap(Resource::getType, r -> new ProdResource(r,productionRate, false, true, true)));
+        consumed = consumes.stream().collect(Collectors.toMap(Resource::getType, r -> new ProdResource(r,productionRate, true, false, true)));
+        this.name = Localize.get(name);
+        this.description = Localize.get(description);
         this.storage = storage;
         unlocked = new SimpleBooleanProperty(true);
     }
@@ -50,15 +52,15 @@ public class Producer {
     }
 
 
-    private boolean isAllEmpty(Map<String, ProdResource> tanks){
+    private boolean isAllEmpty(Map<ResourceType, ProdResource> tanks){
         return tanks.values().stream().allMatch(ProdResource::isEmpty);
     }
 
-    private boolean isAllFull(Map<String, ProdResource> tanks){
+    private boolean isAllFull(Map<ResourceType, ProdResource> tanks){
         return tanks.values().stream().allMatch(ProdResource::isAtMaxCapacity);
     }
 
-    private boolean isAllAtLeast(Map<String, ProdResource> tanks) {
+    private boolean isAllAtLeast(Map<ResourceType, ProdResource> tanks) {
         return tanks.values().stream().allMatch(r -> r.isAtLeastOfCapacity(productionRate.getValue()));
     }
 
@@ -95,19 +97,19 @@ public class Producer {
         return unlocked;
     }
 
-    public String getName() {
+    public ReadOnlyStringProperty getName() {
         return name;
     }
 
-    public String getDescription() {
+    public ReadOnlyStringProperty getDescription() {
         return description;
     }
 
-    public Map<String, ProdResource> getProduced() {
+    public Map<ResourceType, ProdResource> getProduced() {
         return produced;
     }
 
-    public Map<String, ProdResource> getConsumed() {
+    public Map<ResourceType, ProdResource> getConsumed() {
         return consumed;
     }
 

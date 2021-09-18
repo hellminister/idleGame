@@ -1,7 +1,10 @@
 package idlegame.data;
 
+import idlegame.language.Localize;
 import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,15 +46,17 @@ public class ResourceType {
     }
 
 
-    private final String name;
+    private final String id;
+    private final ReadOnlyStringProperty name;
     private final BigDecimal initWeightPerUnit;
     private final BigDecimalProperty weightPerUnit;
 
     private final Set<Resource> tanks;
 
 
-    private ResourceType(String name, BigDecimal weightPerUnit) {
-        this.name = name;
+    private ResourceType(String id, BigDecimal weightPerUnit) {
+        this.id = id;
+        this.name = Localize.get(id);
         initWeightPerUnit = weightPerUnit;
         this.weightPerUnit = new BigDecimalProperty(weightPerUnit);
         tanks = new HashSet<>();
@@ -65,7 +70,7 @@ public class ResourceType {
         tanks.add(tank);
     }
 
-    public String getName() {
+    public ReadOnlyStringProperty getName() {
         return name;
     }
 

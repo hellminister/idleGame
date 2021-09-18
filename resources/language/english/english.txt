@@ -1,0 +1,33 @@
+idt_GAME_TITLE Idle Game
+idt_START_SCREEN_START_BUTTON Start
+idt_STORAGE_BUTTON_GAME_SCREEN Storage
+idt_PRODUCER_BUTTON_GAME_SCREEN Producer
+
+idt_R1 Iron
+idt_R2 Energy
+idt_R3 Air
+idt_R4 Coal
+idt_R5 Steel
+
+idt_TANK_AMOUNT_LABEL Amount
+idt_TANK_MAXIMUM_CAP_LABEL Maximum
+idt_TANK_EFFECTIVE_CAP_LABEL Capped At
+idt_TANK_WEIGHT_LABEL Weight
+
+idt_PRODUCER_RESOURCE_PRODUCE_LABEL Produces
+idt_PRODUCER_RESOURCE_CONSUME_LABEL Consumes
+
+idt_SHIP_PRODUCER_1_NAME Coal Mine
+idt_SHIP_PRODUCER_1_DESCRIPTION Best way to get coal.
+
+idt_SHIP_PRODUCER_2_NAME Air pump
+idt_SHIP_PRODUCER_2_DESCRIPTION Let's pump air.
+
+idt_SHIP_PRODUCER_3_NAME Coal power plant
+idt_SHIP_PRODUCER_3_DESCRIPTION Time to produce electricity!
+
+idt_SHIP_PRODUCER_4_NAME Iron mine
+idt_SHIP_PRODUCER_4_DESCRIPTION Let's dig in the soil. Some coal can also be found.
+
+idt_SHIP_PRODUCER_5_NAME Steel Factory
+idt_SHIP_PRODUCER_5_DESCRIPTION Now time to transform some of those materials. Now to see how the wrapping works and how many words can be inserted in the description.

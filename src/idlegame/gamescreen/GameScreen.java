@@ -3,6 +3,7 @@ package idlegame.gamescreen;
 import idlegame.Main;
 import idlegame.gamescreen.producerscreen.ProducerScreen;
 import idlegame.gamescreen.storagescreen.StorageScreen;
+import idlegame.language.Localize;
 import idlegame.util.Util;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -49,20 +50,21 @@ public class GameScreen extends Scene {
         categories.setStyle("-fx-border-color: white;" +
                 " -fx-border-width: 3");
 
-        Button storage = createButton("Storage", new StorageScreen(main.getGameData()), centerPane);
-        Button producer = createButton("Producer", new ProducerScreen(main.getGameData()), centerPane);
+        Button storage = createButton("idt_STORAGE_BUTTON_GAME_SCREEN", new StorageScreen(main.getGameData()), centerPane);
+        Button producer = createButton("idt_PRODUCER_BUTTON_GAME_SCREEN", new ProducerScreen(main.getGameData()), centerPane);
 
         categories.getChildren().addAll(storage, producer);
 
         root.setLeft(categories);
-        views.get("Storage").setVisible(true);
+        views.get("idt_STORAGE_BUTTON_GAME_SCREEN").setVisible(true);
 
        // ticking = new GameAnimationTimer(main.getGameData());
         ticking = new TickTicker(main.getGameData());
     }
 
     private Button createButton(String name, Pane view, StackPane center){
-        Button button = new Button(name);
+        Button button = new Button();
+        button.textProperty().bind(Localize.get(name));
         views.put(name, view);
         center.getChildren().add(view);
         view.setVisible(false);

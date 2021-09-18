@@ -33,9 +33,10 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         Localize.load("francais");
         stage = primaryStage;
-        primaryStage.titleProperty().bind(Localize.get(Localize.Target.GAME_TITLE));
+        primaryStage.titleProperty().bind(Localize.get("idt_GAME_TITLE"));
 
         gameData = new GameData();
 

@@ -2,6 +2,7 @@ package idlegame.gamescreen.producerscreen;
 
 import idlegame.data.Producer;
 import idlegame.gamescreen.storagescreen.Tank;
+import idlegame.language.Localize;
 import idlegame.util.textfilter.BigDecimalPercentageStringConverter;
 import idlegame.util.textfilter.BigDecimalPercentageTextFilter;
 import javafx.scene.control.Label;
@@ -27,7 +28,8 @@ public class ProducerUI extends HBox {
 
         var layoutA = new AnchorPane();
 
-        Label name = new Label(producer.getName());
+        Label name = new Label();
+        name.textProperty().bind(producer.getName());
         name.getStyleClass().add("producer-ui-title-label");
 
         TextField pRate = new TextField();
@@ -41,13 +43,16 @@ public class ProducerUI extends HBox {
         pRate.setTextFormatter(pRateTextFormatter);
         pRate.getStyleClass().addAll("producer-ui-production-rate-text-field", "producer-ui-title-label");
 
-        Label description = new Label(producer.getDescription());
+        Label description = new Label();
+        description.textProperty().bind(producer.getDescription());
         description.getStyleClass().add("producer-ui-description-label");
 
-        Label produces = new Label("Produces");
+        Label produces = new Label();
+        produces.textProperty().bind(Localize.get("idt_PRODUCER_RESOURCE_PRODUCE_LABEL"));
         produces.getStyleClass().add("producer-ui-section-label");
 
-        Label consumes = new Label("Consumes");
+        Label consumes = new Label();
+        consumes.textProperty().bind(Localize.get("idt_PRODUCER_RESOURCE_CONSUME_LABEL"));
         consumes.getStyleClass().add("producer-ui-section-label");
 
         VBox producers = new VBox(5);
@@ -112,7 +117,8 @@ public class ProducerUI extends HBox {
             this.owner = owner;
             tank = new Tank(resource);
 
-            Label name =  new Label(resource.getName());
+            Label name =  new Label();
+            name.textProperty().bind(resource.getName());
             name.getStyleClass().add("producer-ui-resource-label");
 
             ProgressBar fillRatioBar = new ProgressBar();

@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static idlegame.language.Localize.Target.START_SCREEN_START_BUTTON;
 
 public class StartScreen extends Scene {
     /**
@@ -57,7 +56,7 @@ public class StartScreen extends Scene {
         buttonBar.setAlignment(Pos.CENTER);
 
         Button startButton = new Button();
-        startButton.textProperty().bind(Localize.get(START_SCREEN_START_BUTTON));
+        startButton.textProperty().bind(Localize.get("idt_START_SCREEN_START_BUTTON"));
         startButton.setOnAction(event -> main.switchToGameScene());
 
 

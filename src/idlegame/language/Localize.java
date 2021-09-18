@@ -7,12 +7,11 @@ import javafx.beans.property.StringProperty;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Singleton class containing the texts to show
@@ -24,13 +23,44 @@ public final class Localize {
     /**
      * The singleton object
      */
-    private static final Localize localize = new Localize();
+    private static final Localize localize;
+
+    static {
+        Map<String, StringProperty> temp = new HashMap<>();
+
+        Path dataFolder = Paths.get("resources/data/");
+
+        try (Stream<Path> walk = Files.walk(dataFolder)) {
+            walk.filter(Files::isRegularFile).forEach(path -> {
+                try (BufferedReader br = Files.newBufferedReader(path)) {
+                    String line = br.readLine();
+
+                    while(line != null){
+                        if (!line.isBlank() && !line.startsWith("#")){
+                            String[] text = line.split(" ");
+
+                            Arrays.stream(text).filter(s -> s.startsWith("idt_")).forEach(s -> temp.putIfAbsent(s, new SimpleStringProperty()));
+
+                        }
+                        line = br.readLine();
+                    }
+
+                } catch (IOException e) {
+                    LOG.severe(() -> "Error loading data file : " + path);
+                }
+            });
+        } catch (IOException e) {
+            LOG.severe(() -> "Error treating data folder : " + dataFolder);
+        }
+
+        localize = new Localize(temp);
+    }
 
     /**
      * @param target the string to obtain
      * @return the asked string
      */
-    public static ReadOnlyStringProperty get(Target target){
+    public static ReadOnlyStringProperty get(String target){
         return localize.getString(target);
     }
 
@@ -52,19 +82,14 @@ public final class Localize {
     /**
      * The list of localized String
      */
-    private final Map<Target, StringProperty> localizedStrings;
+    private final Map<String, StringProperty> localizedStrings;
 
     /**
      * The currently loaded language
      */
     private String language;
 
-    private Localize() {
-        EnumMap<Target, StringProperty> temp = new EnumMap<>(Target.class);
-        for (Target t : Target.values()){
-            temp.put(t, new SimpleStringProperty(""));
-        }
-
+    private Localize(Map<String, StringProperty> temp) {
         localizedStrings = Collections.unmodifiableMap(temp);
     }
 
@@ -72,54 +97,52 @@ public final class Localize {
      * @param target the wanted String name
      * @return the wanted String
      */
-    private ReadOnlyStringProperty getString(Target target){
-        return  localizedStrings.get(target);
+    private ReadOnlyStringProperty getString(String target){
+        return  localizedStrings.getOrDefault(target, new SimpleStringProperty("Error for " + target));
     }
 
-    /**
-     * Loads the asked language
-     * @param language the language to load
-     */
-    private void loadLanguage(String language){
+    private void loadLanguage(String language) {
         this.language = language;
-        EnumSet<Target> notLoaded = EnumSet.allOf(Target.class);
-        try (BufferedReader br = Files.newBufferedReader(Paths.get("resources/language/" + language + ".txt"))) {
-            String line = br.readLine();
+        Path languageFolder = Paths.get("resources/language/" + language);
+        Set<String> notLoaded = new HashSet<>(localizedStrings.keySet());
 
-            while(line != null){
-                if (!line.isBlank() && !line.startsWith("#")){
-                    String[] text = line.split(" ", 2);
+        try (Stream<Path> walk = Files.walk(languageFolder)) {
+            walk.filter(Files::isRegularFile).forEach(path -> {
+                String line = "";
+                try (BufferedReader br = Files.newBufferedReader(path)) {
+                    line = br.readLine();
 
-                    Target key = Target.valueOf(text[0]);
-                    localizedStrings.get(key).setValue(text[1]);
-                    notLoaded.remove(key);
+                    while(line != null){
+                        if (!line.isBlank() && !line.startsWith("#")){
+                            String[] text = line.split(" ", 2);
+
+                            String key = text[0];
+                            localizedStrings.get(key).setValue(text[1]);
+                            notLoaded.remove(key);
+                        }
+
+                        line = br.readLine();
+                    }
+
+                } catch (IOException e) {
+                    LOG.severe(() -> "Error loading localization file : " + path);
+                } catch (Exception e) {
+                    String finalLine = line;
+                    LOG.warning(() -> "tries to do something with " + finalLine);
                 }
-
-                line = br.readLine();
-            }
-
-            if (!notLoaded.isEmpty()){
-                LOG.severe(() -> "Missing localization of these entries : " + notLoaded.toString());
-            }
-
+            });
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.severe(() -> "Error treating language folder " + language + " : " + languageFolder);
+        }
+
+        if (!notLoaded.isEmpty()){
+            LOG.severe(() -> "Missing localization of these entries : " + notLoaded);
         }
     }
-
     /**
      * @return the currently loaded language
      */
     private String getLanguage(){
         return language;
-    }
-
-    /**
-     * The list of available localized string
-     * each value represents a String to localize
-     */
-    public enum Target{
-        GAME_TITLE,
-        START_SCREEN_START_BUTTON,
     }
 }

@@ -1,0 +1,33 @@
+idt_GAME_TITLE Jeu Passe-Temps
+idt_START_SCREEN_START_BUTTON Commencer
+idt_STORAGE_BUTTON_GAME_SCREEN Entrepots
+idt_PRODUCER_BUTTON_GAME_SCREEN Producteurs
+
+idt_R1 Fer
+idt_R2 Énergie
+idt_R3 Air
+idt_R4 Charbon
+idt_R5 Acier
+
+idt_TANK_AMOUNT_LABEL Quantité
+idt_TANK_MAXIMUM_CAP_LABEL Maximum
+idt_TANK_EFFECTIVE_CAP_LABEL Plafond
+idt_TANK_WEIGHT_LABEL Poids
+
+idt_PRODUCER_RESOURCE_PRODUCE_LABEL Produit
+idt_PRODUCER_RESOURCE_CONSUME_LABEL Consume
+
+idt_SHIP_PRODUCER_1_NAME Mine de charbon
+idt_SHIP_PRODUCER_1_DESCRIPTION Meilleur façon d'obtenir du charbon.
+
+idt_SHIP_PRODUCER_2_NAME Pompe à air
+idt_SHIP_PRODUCER_2_DESCRIPTION Pompons de l'air.
+
+idt_SHIP_PRODUCER_3_NAME Centrale au charbon
+idt_SHIP_PRODUCER_3_DESCRIPTION Temps à l'électricité!
+
+idt_SHIP_PRODUCER_4_NAME Mine de fer
+idt_SHIP_PRODUCER_4_DESCRIPTION Creusons dans le sol. Du charbon peut aussi être trouvé.
+
+idt_SHIP_PRODUCER_5_NAME Acierie
+idt_SHIP_PRODUCER_5_DESCRIPTION Maintenant transformons les matériaux. Maintenant voyons comment le retour à la ligne fonctionne et combien de mots peut être inséré dans la descr.

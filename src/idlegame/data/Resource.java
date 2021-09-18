@@ -189,7 +189,7 @@ public class Resource {
         return maxCapacity;
     }
 
-    public String getName(){
+    public ReadOnlyStringProperty getName(){
         return type.getName();
     }
 
