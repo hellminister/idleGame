@@ -17,17 +17,23 @@ idt_TANK_WEIGHT_LABEL Poids
 idt_PRODUCER_RESOURCE_PRODUCE_LABEL Produit
 idt_PRODUCER_RESOURCE_CONSUME_LABEL Consume
 
-idt_SHIP_PRODUCER_1_NAME Mine de charbon
-idt_SHIP_PRODUCER_1_DESCRIPTION Meilleur façon d'obtenir du charbon.
+idt_EARTH_PRODUCER_1_NAME Mine de charbon
+idt_EARTH_PRODUCER_1_DESCRIPTION Meilleur façon d'obtenir du charbon.
 
-idt_SHIP_PRODUCER_2_NAME Pompe à air
-idt_SHIP_PRODUCER_2_DESCRIPTION Pompons de l'air.
+idt_EARTH_PRODUCER_2_NAME Pompe à air
+idt_EARTH_PRODUCER_2_DESCRIPTION Pompons de l'air.
 
-idt_SHIP_PRODUCER_3_NAME Centrale au charbon
-idt_SHIP_PRODUCER_3_DESCRIPTION Temps à l'électricité!
+idt_EARTH_PRODUCER_3_NAME Centrale au charbon
+idt_EARTH_PRODUCER_3_DESCRIPTION Temps à l'électricité!
 
-idt_SHIP_PRODUCER_4_NAME Mine de fer
-idt_SHIP_PRODUCER_4_DESCRIPTION Creusons dans le sol. Du charbon peut aussi être trouvé.
+idt_EARTH_PRODUCER_4_NAME Mine de fer
+idt_EARTH_PRODUCER_4_DESCRIPTION Creusons dans le sol. Du charbon peut aussi être trouvé.
 
-idt_SHIP_PRODUCER_5_NAME Acierie
-idt_SHIP_PRODUCER_5_DESCRIPTION Maintenant transformons les matériaux. Maintenant voyons comment le retour à la ligne fonctionne et combien de mots peut être inséré dans la descr.
+idt_EARTH_PRODUCER_5_NAME Acierie
+idt_EARTH_PRODUCER_5_DESCRIPTION Maintenant transformons les matériaux. Maintenant voyons comment le retour à la ligne fonctionne et combien de mots peut être inséré dans la descr.
+
+idt_EARTH_NAME Terre
+idt_EARTH_DESCRIPTION La planète mère
+
+idt_SHIP_PRODUCER_1_NAME Panneau solaire
+idt_SHIP_PRODUCER_1_DESCRIPTION Bonne source dans l'espace

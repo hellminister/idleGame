@@ -1,5 +1,6 @@
 package idlegame.data;
 
+import idlegame.gamescreen.storagescreen.Tank;
 import idlegame.util.property.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -28,10 +30,30 @@ public class Resource {
     protected boolean countRequest = true;
     protected boolean invert = false;
 
+    protected Tank tankUI = null;
+
 
     protected final BigDecimalPerSecondProperty perSecond;
 
-    public Resource(ResourceType type, BigDecimal maxCapacityInitial) {
+    public Resource(String creationLine, String... otherTags){
+        this(concat(creationLine.split(" "), otherTags));
+    }
+
+    private static String[] concat(String[] s, String[] otherTags) {
+        String[] result = new String[s.length + otherTags.length];
+
+        System.arraycopy(s, 0, result, 0, s.length);
+        System.arraycopy(otherTags, 0, result, s.length, otherTags.length);
+
+        return result;
+    }
+
+    private Resource(String[] s) {
+        this(ResourceType.get(s[0]), new BigDecimal(s[1]), Arrays.copyOfRange(s, 2, s.length));
+    }
+
+    // TODO treat tags
+    public Resource(ResourceType type, BigDecimal maxCapacityInitial, String... tags) {
         this.type = type;
         this.amount = new BigDecimalProperty(BigDecimal.ZERO);
         this.initialMaxCapacity = maxCapacityInitial;
@@ -107,6 +129,8 @@ public class Resource {
         };
         type.register(this);
     }
+
+
 
     public void moveTick(){
         perSecond.moveTick();
@@ -197,9 +221,9 @@ public class Resource {
         return amount;
     }
 
-    public String toString(){
+  /*  public String toString(){
         return type.getName() + " -> " + amount.asStringProperty().get() + "  /  " + maxCapacity.asStringProperty().get();
-    }
+    }*/
 
     public DoubleBinding getFillRatio(){
         return fillRatio;
@@ -225,4 +249,10 @@ public class Resource {
         return weightProperty;
     }
 
+    public Tank getTankUI() {
+        if (tankUI == null){
+            tankUI = new Tank(this);
+        }
+        return tankUI;
+    }
 }

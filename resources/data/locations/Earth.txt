@@ -1,0 +1,57 @@
+_info
+idt_EARTH_NAME
+idt_EARTH_DESCRIPTION
+info_
+
+_tank
+idt_R1 100000 idt_EARTH_NAME
+idt_R2 100000 idt_EARTH_NAME
+idt_R3 100000 idt_EARTH_NAME
+idt_R4 100000 idt_EARTH_NAME
+idt_R5 100000 idt_EARTH_NAME
+tank_
+
+_producer
+idt_EARTH_PRODUCER_1_NAME
+idt_EARTH_PRODUCER_1_DESCRIPTION
+idt_R4 10 idt_EARTH_NAME
+/endProduced
+/endConsumed
+
+idt_EARTH_PRODUCER_2_NAME
+idt_EARTH_PRODUCER_2_DESCRIPTION
+idt_R3 100 idt_EARTH_NAME
+/endProduced
+/endConsumed
+
+idt_EARTH_PRODUCER_3_NAME
+idt_EARTH_PRODUCER_3_DESCRIPTION
+idt_R2 40 idt_EARTH_NAME
+/endProduced
+idt_R4 100 idt_EARTH_NAME
+idt_R3 150 idt_EARTH_NAME
+/endConsumed
+
+idt_EARTH_PRODUCER_4_NAME
+idt_EARTH_PRODUCER_4_DESCRIPTION
+idt_R1 10 idt_EARTH_NAME
+idt_R4 1 idt_EARTH_NAME
+/endProduced
+idt_R2 500 idt_EARTH_NAME
+/endConsumed
+
+idt_EARTH_PRODUCER_5_NAME
+idt_EARTH_PRODUCER_5_DESCRIPTION
+idt_R5 100 idt_EARTH_NAME
+/endProduced
+idt_R4 100 idt_EARTH_NAME
+idt_R3 200 idt_EARTH_NAME
+idt_R1 100 idt_EARTH_NAME
+idt_R2 500 idt_EARTH_NAME
+/endConsumed
+producer_
+
+_unlock
+unlock_
+
+_end

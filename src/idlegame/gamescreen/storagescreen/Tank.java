@@ -2,6 +2,7 @@ package idlegame.gamescreen.storagescreen;
 
 import idlegame.data.Resource;
 import idlegame.language.Localize;
+import idlegame.util.Util;
 import idlegame.util.textfilter.BigDecimalStringConverter;
 import idlegame.util.textfilter.BigDecimalTextFilter;
 import idlegame.util.textfilter.TextDoublePercentageFilter;
@@ -15,9 +16,13 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class Tank extends HBox {
+    private static final String TANK_STYLE_SHEET_PATH = Util.getFilePathString("resources/stylesheet/Tank.css");
+
     protected Resource tank;
 
     public Tank(Resource tank) {
+        System.out.println(tank);
+        getStylesheets().add(TANK_STYLE_SHEET_PATH);
 
         this.tank = tank;
         getStyleClass().add("tank-main-box");

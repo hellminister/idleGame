@@ -1,6 +1,7 @@
 package idlegame.data;
 
 
+import idlegame.gamescreen.producerscreen.ProducerUI;
 import idlegame.language.Localize;
 import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
@@ -11,28 +12,56 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Producer {
+    private static final Map<ReadOnlyStringProperty, Producer> allProducers;
+
+    static {
+        allProducers = new HashMap<>();
+    }
+
+    private static void addProducer(Producer producer){
+        allProducers.put(producer.getName(), producer);
+    }
+
+    public static Producer getProducer(ReadOnlyStringProperty name){
+        return allProducers.get(name);
+    }
+
+    public static Producer getProducer(String nameIdTag){
+        return allProducers.get(Localize.get(nameIdTag));
+    }
+
+
     private final ReadOnlyStringProperty name;
     private final ReadOnlyStringProperty description;
 
     private final Map<ResourceType, ProdResource> produced;
     private final Map<ResourceType, ProdResource> consumed;
-    private final Resourceful storage;
+    private Resourceful storage;
     private final BigDecimalProperty productionRate;
     private final BooleanProperty unlocked;
+    private ProducerUI ui = null;
 
-    public Producer(String name, String description, Set<Resource> produces, Set<Resource> consumes, Resourceful storage) {
+    public Producer(String name, String description, Set<String> produces, Set<String> consumes) {
         productionRate = new BigDecimalProperty(BigDecimal.valueOf(1.0));
-        produced = produces.stream().collect(Collectors.toMap(Resource::getType, r -> new ProdResource(r,productionRate, false, true, true)));
-        consumed = consumes.stream().collect(Collectors.toMap(Resource::getType, r -> new ProdResource(r,productionRate, true, false, true)));
+        produced = produces.stream().map(s -> new ProdResource(s, productionRate, false, true, true)).collect(Collectors.toMap(Resource::getType, Function.identity()));
+        consumed = consumes.stream().map(s -> new ProdResource(s, productionRate, true, false, true)).collect(Collectors.toMap(Resource::getType, Function.identity()));
+
         this.name = Localize.get(name);
         this.description = Localize.get(description);
-        this.storage = storage;
         unlocked = new SimpleBooleanProperty(true);
+        addProducer(this);
+    }
+
+    public void setStorage(Resourceful storage){
+        this.storage = storage;
+        System.out.println("producer " + name + " has storage to " + storage.getId());
     }
 
     public void generate(){
@@ -117,20 +146,23 @@ public class Producer {
         return productionRate;
     }
 
+    public ProducerUI getProducerUI() {
+        if (ui == null){
+            ui = new ProducerUI(this);
+        }
+        return ui;
+    }
+
     public static class ProdResource extends Resource{
 
         private final ProductionBinding actualProduction;
 
-        public ProdResource(ResourceType type, BigDecimal maxCapacity, ReadOnlyBigDecimalProperty prodRate, boolean countStore, boolean countRequest, boolean invert) {
-            super(type, maxCapacity);
+        public ProdResource(String resourceString, ReadOnlyBigDecimalProperty prodRate, boolean countStore, boolean countRequest, boolean invert) {
+            super(resourceString);
             this.countRequest = countRequest;
             this.countStore = countStore;
             this.invert = invert;
             actualProduction = new ProductionBinding(this.getMaxCapacity(), prodRate);
-        }
-
-        private ProdResource(Resource r, BigDecimalProperty productionRate, boolean countStore, boolean countRequest, boolean invert) {
-            this(r.getType(), r.maxCapacity.getValue(), productionRate, countStore, countRequest, invert);
         }
 
 

@@ -10,12 +10,10 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class TickTicker {
-    private ScheduledThreadPoolExecutor stpe;
-    private GameData gameData;
+    private final ScheduledThreadPoolExecutor stpe;
     private Ticker handler;
 
     public TickTicker(GameData data){
-        gameData = data;
 
         stpe = new ScheduledThreadPoolExecutor(1);
         handler = new Ticker(data);
@@ -59,14 +57,13 @@ public class TickTicker {
         @Override
         public void run() {
             Platform.runLater(() -> {long now = System.nanoTime();
-                long tickTime = 0;
+                long tickTime;
                 if (lastTime != 0){
                     tickTime = now - lastTime;
                     tillSecond += tickTime;
                     if (tillSecond >= SECOND_IN_NANO){
                         System.out.println(tick + " ticks in a second of " + tillSecond + " nanoSecond");
                         System.out.println("Acted " + acted + " times. Tick Average time = " + (timePerSecond / 10) / 1000000.0 + " milliseconds.");
-                        tickTime = 0;
                         tick = 1;
                         acted = 0;
                         tillSecond = 0;
@@ -84,6 +81,9 @@ public class TickTicker {
                     }
 
                     gameData.getMyShip().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
+                            .forEach(Producer::generate);
+
+                    gameData.getMyShip().getOtherLocation().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
                             .forEach(Producer::generate);
 
                     long end = System.nanoTime();

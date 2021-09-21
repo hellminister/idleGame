@@ -3,6 +3,7 @@ package idlegame.gamescreen.producerscreen;
 import idlegame.data.Producer;
 import idlegame.gamescreen.storagescreen.Tank;
 import idlegame.language.Localize;
+import idlegame.util.Util;
 import idlegame.util.textfilter.BigDecimalPercentageStringConverter;
 import idlegame.util.textfilter.BigDecimalPercentageTextFilter;
 import javafx.scene.control.Label;
@@ -17,11 +18,12 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class ProducerUI extends HBox {
-    private final Producer producer;
+    private static final String PRODUCER_UI_STYLE_SHEET_PATH = Util.getFilePathString("resources/stylesheet/ProducerUI.css");
+
     private ResourceMonitor selected;
 
     public ProducerUI(Producer producer) {
-        this.producer = producer;
+        getStylesheets().add(PRODUCER_UI_STYLE_SHEET_PATH);
 
         getStyleClass().add("producer-ui-main-box");
         visibleProperty().bind(producer.unlockedProperty());
@@ -35,7 +37,7 @@ public class ProducerUI extends HBox {
         TextField pRate = new TextField();
         pRate.setEditable(true);
 
-        TextFormatter<BigDecimal> pRateTextFormatter = new TextFormatter<BigDecimal>(new BigDecimalPercentageStringConverter(new DecimalFormat("##0.#")),
+        TextFormatter<BigDecimal> pRateTextFormatter = new TextFormatter<>(new BigDecimalPercentageStringConverter(new DecimalFormat("##0.#")),
                 producer.getProductionRate().getValue(),
                 new BigDecimalPercentageTextFilter(d -> (d.compareTo(BigDecimal.ZERO) >= 0 && d.compareTo(BigDecimal.valueOf(100)) <= 0)));
         pRateTextFormatter.valueProperty().bindBidirectional(producer.getProductionRate());
@@ -108,14 +110,10 @@ public class ProducerUI extends HBox {
     }
 
     static class ResourceMonitor extends VBox {
-        private final Producer.ProdResource resource;
-        private final ProducerUI owner;
         private final Tank tank;
 
         ResourceMonitor(Producer.ProdResource resource, ProducerUI owner) {
-            this.resource = resource;
-            this.owner = owner;
-            tank = new Tank(resource);
+            tank = resource.getTankUI();
 
             Label name =  new Label();
             name.textProperty().bind(resource.getName());
