@@ -13,7 +13,7 @@ startIn_
 _producer
 idt_SHIP_PRODUCER_1_NAME
 idt_SHIP_PRODUCER_1_DESCRIPTION
-idt_R2 1000 ship
+idt_R2 100 ship
 /endProduced
 /endConsumed
 producer_

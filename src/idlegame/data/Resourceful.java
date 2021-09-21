@@ -47,7 +47,8 @@ public abstract class Resourceful {
         BigDecimal obtained = tanks.getResource(type).request(amount);
 
         if (obtained.compareTo(amount) < 0 && otherLocation != null){
-            obtained = otherLocation.requestOnlyHere(type, obtained);
+            BigDecimal missing = amount.subtract(obtained);
+            obtained = obtained.add(otherLocation.requestOnlyHere(type, missing));
         }
 
         return obtained;
