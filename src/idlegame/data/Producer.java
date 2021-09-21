@@ -61,7 +61,6 @@ public class Producer {
 
     public void setStorage(Resourceful storage){
         this.storage = storage;
-        System.out.println("producer " + name + " has storage to " + storage.getId());
     }
 
     public void generate(){

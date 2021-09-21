@@ -221,9 +221,9 @@ public class Resource {
         return amount;
     }
 
-  /*  public String toString(){
+    public String toString(){
         return type.getName() + " -> " + amount.asStringProperty().get() + "  /  " + maxCapacity.asStringProperty().get();
-    }*/
+    }
 
     public DoubleBinding getFillRatio(){
         return fillRatio;

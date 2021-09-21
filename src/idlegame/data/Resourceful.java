@@ -28,9 +28,7 @@ public abstract class Resourceful {
     }
 
     public BigDecimal store(ResourceType type,  BigDecimal amount){
-        System.out.println("Storing " + amount + " " + type.getName().get() + " to " + id);
         BigDecimal remains = tanks.getResource(type).store(amount);
-        System.out.println("Remains " + remains + " " + type.getName().get());
 
         if (remains.compareTo(BigDecimal.ZERO) > 0 && otherLocation != null){
             remains = otherLocation.storeOnlyHere(type, remains);
