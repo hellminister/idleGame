@@ -21,7 +21,6 @@ public class Tank extends HBox {
     protected Resource tank;
 
     public Tank(Resource tank) {
-        System.out.println(tank);
         getStylesheets().add(TANK_STYLE_SHEET_PATH);
 
         this.tank = tank;

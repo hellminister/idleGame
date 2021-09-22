@@ -20,8 +20,6 @@ import java.text.DecimalFormat;
 public class ProducerUI extends HBox {
     private static final String PRODUCER_UI_STYLE_SHEET_PATH = Util.getFilePathString("resources/stylesheet/ProducerUI.css");
 
-    private ResourceMonitor selected;
-
     public ProducerUI(Producer producer) {
         getStylesheets().add(PRODUCER_UI_STYLE_SHEET_PATH);
 
@@ -102,38 +100,29 @@ public class ProducerUI extends HBox {
         getChildren().addAll(layoutA);
     }
 
-    private ResourceMonitor getSelected(){
-        return selected;
-    }
-    private void setSelected(ResourceMonitor rm) {
-        selected = rm;
-    }
-
     static class ResourceMonitor extends VBox {
         private final Tank tank;
+        private boolean selected;
 
         ResourceMonitor(Producer.ProdResource resource, ProducerUI owner) {
             tank = resource.getTankUI();
+            selected = false;
 
             Label name =  new Label();
             name.textProperty().bind(resource.getName());
             name.getStyleClass().add("producer-ui-resource-label");
 
             ProgressBar fillRatioBar = new ProgressBar();
-            fillRatioBar.progressProperty().bind(resource.getFillRatio());
+            fillRatioBar.progressProperty().bind(resource.productionFilledRatioProperty());
             fillRatioBar.getStyleClass().add("producer-ui-resource-fill-bar");
 
             fillRatioBar.setOnMouseClicked(event -> {
-                ResourceMonitor selected = owner.getSelected();
-                if (selected == this){
-                    owner.setSelected(null);
+                if (selected){
+                    selected = false;
                     owner.getChildren().remove(tank);
                 } else {
-                    if (selected != null){
-                        owner.getChildren().remove(selected.tank);
-                    }
+                    selected = true;
                     owner.getChildren().add(tank);
-                    owner.setSelected(this);
                 }
             });
 

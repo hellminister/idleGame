@@ -5,6 +5,7 @@ import idlegame.gamescreen.producerscreen.ProducerUI;
 import idlegame.language.Localize;
 import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
+import javafx.beans.binding.Binding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -12,6 +13,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -68,14 +70,14 @@ public class Producer {
         produced.values().forEach(r -> transfer(r, storage, r.getAmount().getValue()));
 
         // second lets fill the producer
-        consumed.values().forEach(r -> transfer(storage, r, r.actualProduction()));
+        consumed.values().forEach(r -> transfer(storage, r, r.getActualProduction()));
 
         // last, if the producer is at least at production rate capacity, and the produced resources are not all full, generate the resources, and empty the producers tanks by
         // the production rate
         // using toggles i could add different producing behaviors
         if (isAllAtLeast(consumed) && !isAllFull(produced)){
-            produced.values().forEach(r -> r.store(r.actualProduction()));
-            consumed.values().forEach((r -> r.request(r.actualProduction())));
+            produced.values().forEach(r -> r.store(r.getActualProduction()));
+            consumed.values().forEach((r -> r.request(r.getActualProduction())));
         }
     }
 
@@ -153,8 +155,8 @@ public class Producer {
     }
 
     public static class ProdResource extends Resource{
-
         private final ProductionBinding actualProduction;
+        private final FillProductionBinding productionFilledRatio;
 
         public ProdResource(String resourceString, ReadOnlyBigDecimalProperty prodRate, boolean countStore, boolean countRequest, boolean invert) {
             super(resourceString);
@@ -162,11 +164,21 @@ public class Producer {
             this.countStore = countStore;
             this.invert = invert;
             actualProduction = new ProductionBinding(this.getMaxCapacity(), prodRate);
+            productionFilledRatio = new FillProductionBinding(actualProduction, getAmount());
         }
 
 
-        public BigDecimal actualProduction(){
+        public BigDecimal getActualProduction(){
             return actualProduction.getValue();
+        }
+        public BigDecimal getProductionFilledRatio(){ return productionFilledRatio.getValue();}
+
+        public Binding<BigDecimal> actualProductionProperty() {
+            return actualProduction;
+        }
+
+        public Binding<BigDecimal> productionFilledRatioProperty() {
+            return productionFilledRatio;
         }
     }
 
@@ -193,6 +205,32 @@ public class Producer {
         @Override
         protected BigDecimal computeValue() {
             return value.getValue().multiply(mod.getValue());
+        }
+    }
+
+    private static class FillProductionBinding extends ObjectBinding<BigDecimal> {
+        private final ProductionBinding max;
+        private final ReadOnlyBigDecimalProperty amount;
+
+        public FillProductionBinding(ProductionBinding max, ReadOnlyBigDecimalProperty amount) {
+            this.max = max;
+            this.amount = amount;
+
+            bind(max, amount);
+        }
+
+
+        /**
+         * Calculates the current value of this binding.
+         * <p>
+         * Classes extending {@code ObjectBinding} have to provide an implementation
+         * of {@code computeValue}.
+         *
+         * @return the current value
+         */
+        @Override
+        protected BigDecimal computeValue() {
+            return amount.getValue().divide(max.getValue(), 6, RoundingMode.HALF_UP);
         }
     }
 
