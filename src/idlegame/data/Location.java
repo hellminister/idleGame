@@ -44,11 +44,17 @@ public class Location extends Resourceful{
 
     private final ReadOnlyStringProperty name;
     private final ReadOnlyStringProperty description;
+    private final PriorityList priorityList;
 
     public Location(ResourceTanks tanks, String name, String description) {
         super(tanks, name);
         this.name = Localize.get(name);
         this.description = Localize.get(description);
+        priorityList = new PriorityList();
+    }
+
+    public PriorityList getPriorityList(){
+        return priorityList;
     }
 
 

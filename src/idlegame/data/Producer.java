@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Producer {
+public class Producer implements Prioritable {
     private static final Map<ReadOnlyStringProperty, Producer> allProducers;
 
     static {
@@ -81,6 +81,44 @@ public class Producer {
         }
     }
 
+    @Override
+    public void preRun() {
+        produced.values().forEach(r -> transfer(r, storage, r.getAmount().getValue()));
+    }
+
+    @Override
+    public Map<ResourceType, BigDecimal> getNeeds() {
+        Map<ResourceType, BigDecimal> needs = new HashMap<>();
+
+        consumed.values().forEach(r -> {
+            BigDecimal need = r.getActualProduction();
+            need = r.effectiveMaxCapacity.get().subtract(r.getAmount().getValue()).min(need);
+            if (need.compareTo(BigDecimal.ZERO) > 0) {
+                needs.put(r.getType(), need);
+            }
+        });
+
+        return needs;
+    }
+
+    @Override
+    public Resourceful getResourceful() {
+        return storage;
+    }
+
+    @Override
+    public void receive(Map<ResourceType, BigDecimal> obtained) {
+        // second lets fill the producer
+        consumed.values().forEach(r -> r.store(obtained.getOrDefault(r.getType(), BigDecimal.ZERO)));
+
+        // last, if the producer is at least at production rate capacity, and the produced resources are not all full, generate the resources, and empty the producers tanks by
+        // the production rate
+        // using toggles i could add different producing behaviors
+        if (isAllAtLeast(consumed) && !isAllFull(produced)){
+            produced.values().forEach(r -> r.store(r.getActualProduction()));
+            consumed.values().forEach((r -> r.request(r.getActualProduction())));
+        }
+    }
 
     private boolean isAllEmpty(Map<ResourceType, ProdResource> tanks){
         return tanks.values().stream().allMatch(ProdResource::isEmpty);
@@ -153,6 +191,8 @@ public class Producer {
         }
         return ui;
     }
+
+
 
     public static class ProdResource extends Resource{
         private final ProductionBinding actualProduction;

@@ -80,11 +80,13 @@ public class TickTicker {
                         r.getTanks().forEach(Resource::moveTick);
                     }
 
-                    gameData.getMyShip().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
-                            .forEach(Producer::generate);
+//                    gameData.getMyShip().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
+//                            .forEach(Producer::generate);
+//
+//                    gameData.getMyShip().getOtherLocation().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
+//                            .forEach(Producer::generate);
 
-                    gameData.getMyShip().getOtherLocation().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
-                            .forEach(Producer::generate);
+                    gameData.getMyShip().getLocation().getPriorityList().run();
 
                     long end = System.nanoTime();
 

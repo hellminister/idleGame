@@ -15,6 +15,11 @@ public class GameData{
         Location.loadLocations(dataPath);
         myShip = ShipLoader.loadShip(dataPath).orElseThrow();
 
+        PriorityGroup group = myShip.getLocation().getPriorityList().newGroup();
+
+        myShip.getLocation().getAllProducers().forEach(group::addTask);
+        myShip.getAllProducers().forEach(group::addTask);
+
     }
 
     public Ship getMyShip(){

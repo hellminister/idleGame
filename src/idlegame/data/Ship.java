@@ -18,5 +18,9 @@ public class Ship extends Resourceful{
         otherLocation.setLocation(this);
     }
 
+    public Location getLocation(){
+        return (Location)otherLocation;
+    }
+
 
 }

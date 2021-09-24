@@ -1,7 +1,9 @@
 package idlegame.data;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Resourceful {
@@ -52,6 +54,14 @@ public abstract class Resourceful {
         return obtained;
     }
 
+    public Map<ResourceType, BigDecimal> request(Map<ResourceType, BigDecimal> requires) {
+        Map<ResourceType, BigDecimal> obtained = new HashMap<>();
+
+        requires.forEach((key, value) -> obtained.compute(key, (k, v) -> request(k, value)));
+
+        return obtained;
+    }
+
     public BigDecimal requestOnlyHere(ResourceType type, BigDecimal amount){
         return tanks.getResource(type).request(amount);
     }
@@ -74,4 +84,6 @@ public abstract class Resourceful {
     public String getId(){
         return id;
     }
+
+
 }
