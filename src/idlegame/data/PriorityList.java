@@ -1,27 +1,26 @@
 package idlegame.data;
 
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class PriorityList {
-    private final ObservableList<PriorityGroup> groups;
+import java.util.LinkedList;
+
+public class PriorityList extends SimpleListProperty<PriorityGroup> {
+ //   private final ObservableList<PriorityGroup> groups;
 
 
     public PriorityList() {
-        groups = FXCollections.observableArrayList();
+        super(FXCollections.observableList(new LinkedList<PriorityGroup>()));
     }
 
     public PriorityGroup newGroup() {
         PriorityGroup group = new PriorityGroup();
-        groups.add(group);
+        add(group);
         return group;
     }
 
-    public ObservableList<PriorityGroup> getGroups(){
-        return groups;
-    }
-
     public void run() {
-        groups.forEach(PriorityGroup::execute);
+        forEach(PriorityGroup::execute);
     }
 }

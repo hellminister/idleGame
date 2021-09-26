@@ -2,6 +2,7 @@ idt_GAME_TITLE Jeu Passe-Temps
 idt_START_SCREEN_START_BUTTON Commencer
 idt_STORAGE_BUTTON_GAME_SCREEN Entrepots
 idt_PRODUCER_BUTTON_GAME_SCREEN Producteurs
+idt_PRIORITY_BUTTON_GAME_SCREEN Priorité
 
 idt_R1 Fer
 idt_R2 Énergie

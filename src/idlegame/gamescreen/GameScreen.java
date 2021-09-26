@@ -1,6 +1,7 @@
 package idlegame.gamescreen;
 
 import idlegame.Main;
+import idlegame.gamescreen.priorityscreen.PriorityScreen;
 import idlegame.gamescreen.producerscreen.ProducerScreen;
 import idlegame.gamescreen.storagescreen.StorageScreen;
 import idlegame.language.Localize;
@@ -46,8 +47,9 @@ public class GameScreen extends Scene {
 
         Button storage = createButton("idt_STORAGE_BUTTON_GAME_SCREEN", new StorageScreen(main.getGameData()), centerPane);
         Button producer = createButton("idt_PRODUCER_BUTTON_GAME_SCREEN", new ProducerScreen(main.getGameData()), centerPane);
+        Button priority = createButton("idt_PRIORITY_BUTTON_GAME_SCREEN", new PriorityScreen(main.getGameData()), centerPane);
 
-        categories.getChildren().addAll(storage, producer);
+        categories.getChildren().addAll(storage, producer, priority);
 
         root.setLeft(categories);
         views.get("idt_STORAGE_BUTTON_GAME_SCREEN").setVisible(true);
