@@ -1,7 +1,7 @@
 package idlegame.data;
 
 
-import idlegame.gamescreen.producerscreen.ProducerUI;
+import idlegame.ui.gamescreen.producerscreen.ProducerUI;
 import idlegame.language.Localize;
 import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
@@ -65,21 +65,6 @@ public class Producer implements Prioritable {
         this.storage = storage;
     }
 
-    public void generate(){
-        // first lets empty the previous production if any is left
-        produced.values().forEach(r -> transfer(r, storage, r.getAmount().getValue()));
-
-        // second lets fill the producer
-        consumed.values().forEach(r -> transfer(storage, r, r.getActualProduction()));
-
-        // last, if the producer is at least at production rate capacity, and the produced resources are not all full, generate the resources, and empty the producers tanks by
-        // the production rate
-        // using toggles i could add different producing behaviors
-        if (isAllAtLeast(consumed) && !isAllFull(produced)){
-            produced.values().forEach(r -> r.store(r.getActualProduction()));
-            consumed.values().forEach((r -> r.request(r.getActualProduction())));
-        }
-    }
 
     @Override
     public void preRun() {

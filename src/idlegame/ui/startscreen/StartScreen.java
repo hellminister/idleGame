@@ -1,7 +1,7 @@
-package idlegame.startscreen;
+package idlegame.ui.startscreen;
 
-import idlegame.Main;
 import idlegame.language.Localize;
+import idlegame.ui.MainWindow;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -22,7 +22,7 @@ public class StartScreen extends Scene {
      *
      * @param main the Main game object
      */
-    public StartScreen(Main main) {
+    public StartScreen(MainWindow main) {
         super(new StackPane());
 
         var root = (StackPane)getRoot();

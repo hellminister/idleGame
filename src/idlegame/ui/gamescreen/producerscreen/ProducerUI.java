@@ -1,7 +1,7 @@
-package idlegame.gamescreen.producerscreen;
+package idlegame.ui.gamescreen.producerscreen;
 
 import idlegame.data.Producer;
-import idlegame.gamescreen.storagescreen.Tank;
+import idlegame.ui.gamescreen.storagescreen.Tank;
 import idlegame.language.Localize;
 import idlegame.util.Util;
 import idlegame.util.textfilter.BigDecimalPercentageStringConverter;

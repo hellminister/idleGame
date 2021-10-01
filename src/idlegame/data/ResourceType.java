@@ -4,7 +4,6 @@ import idlegame.language.Localize;
 import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.StringProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,11 +1,10 @@
-package idlegame.gamescreen;
+package idlegame.ui.gamescreen;
 
-import idlegame.Main;
-import idlegame.gamescreen.priorityscreen.PriorityScreen;
-import idlegame.gamescreen.producerscreen.ProducerScreen;
-import idlegame.gamescreen.storagescreen.StorageScreen;
+import idlegame.ui.MainWindow;
+import idlegame.ui.gamescreen.priorityscreen.PriorityScreen;
+import idlegame.ui.gamescreen.producerscreen.ProducerScreen;
+import idlegame.ui.gamescreen.storagescreen.StorageScreen;
 import idlegame.language.Localize;
-import idlegame.util.Util;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,10 +24,11 @@ public class GameScreen extends Scene {
     /**
      * Creates a Scene for a specific root Node.
      *
-     * Currently copying (Mostly) the interface of Space Travel Idle (since I like that user interface)
+     * Currently, copying (Mostly) the interface of Space Travel Idle (since I like that user interface)
      *
+     * @param main the main window
      */
-    public GameScreen(Main main) {
+    public GameScreen(MainWindow main) {
         super(new BorderPane());
 
         var root = (BorderPane)getRoot();

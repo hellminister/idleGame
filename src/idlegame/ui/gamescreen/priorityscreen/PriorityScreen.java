@@ -1,4 +1,4 @@
-package idlegame.gamescreen.priorityscreen;
+package idlegame.ui.gamescreen.priorityscreen;
 
 import idlegame.data.GameData;
 import idlegame.data.PriorityList;

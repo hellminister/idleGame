@@ -1,4 +1,4 @@
-package idlegame.gamescreen.producerscreen;
+package idlegame.ui.gamescreen.producerscreen;
 
 import idlegame.data.GameData;
 import idlegame.data.Resourceful;

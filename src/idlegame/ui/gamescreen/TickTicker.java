@@ -1,7 +1,6 @@
-package idlegame.gamescreen;
+package idlegame.ui.gamescreen;
 
 import idlegame.data.GameData;
-import idlegame.data.Producer;
 import idlegame.data.Resource;
 import idlegame.data.ResourceType;
 import javafx.application.Platform;
@@ -79,12 +78,6 @@ public class TickTicker {
                     for (ResourceType r: ResourceType.getAll().values()) {
                         r.getTanks().forEach(Resource::moveTick);
                     }
-
-//                    gameData.getMyShip().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
-//                            .forEach(Producer::generate);
-//
-//                    gameData.getMyShip().getOtherLocation().getAllProducers().stream().filter(producer -> producer.unlockedProperty().get())
-//                            .forEach(Producer::generate);
 
                     gameData.getMyShip().getLocation().getPriorityList().run();
 

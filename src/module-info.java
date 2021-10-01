@@ -4,8 +4,5 @@ module IdleGame {
     requires java.logging;
 
     exports idlegame;
-    exports idlegame.util;
-    exports idlegame.data;
-    exports idlegame.util.textfilter;
-    exports idlegame.util.property;
+    exports idlegame.ui to javafx.graphics;
 }

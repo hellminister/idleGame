@@ -56,24 +56,16 @@ public class PriorityGroup {
                 task.preRun();
                 Map<ResourceType, BigDecimal> requires = task.getNeeds();
                 neededResources.put(task, requires);
-                requires.forEach((k, v) ->{
-                    ratios.merge(k, v, BigDecimal::add);
-                });
+                requires.forEach((k, v) -> ratios.merge(k, v, BigDecimal::add));
                 Map<ResourceType, BigDecimal> obtained = task.getResourceful().request(requires);
-                obtained.forEach((k, v) ->{
-                    cumulative.merge(k, v, BigDecimal::add);
-                });
+                obtained.forEach((k, v) -> cumulative.merge(k, v, BigDecimal::add));
             }
 
-            ratios.forEach((k, v) -> {
-                ratios.put(k, cumulative.get(k).divide(v, 6, RoundingMode.HALF_UP));
-            });
+            ratios.forEach((k, v) -> ratios.put(k, cumulative.get(k).divide(v, 6, RoundingMode.HALF_UP)));
 
             for (Prioritable task : group){
                 Map<ResourceType, BigDecimal> requires = neededResources.get(task);
-                requires.forEach((k, v) ->{
-                    requires.put(k, ratios.get(k).multiply(v));
-                });
+                requires.forEach((k, v) -> requires.put(k, ratios.get(k).multiply(v)));
 
 
                 task.receive(requires);

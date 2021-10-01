@@ -1,6 +1,6 @@
 package idlegame.data;
 
-import idlegame.gamescreen.storagescreen.Tank;
+import idlegame.ui.gamescreen.storagescreen.Tank;
 import idlegame.util.property.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;

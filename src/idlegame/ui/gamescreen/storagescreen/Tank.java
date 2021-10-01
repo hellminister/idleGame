@@ -1,4 +1,4 @@
-package idlegame.gamescreen.storagescreen;
+package idlegame.ui.gamescreen.storagescreen;
 
 import idlegame.data.Resource;
 import idlegame.language.Localize;
