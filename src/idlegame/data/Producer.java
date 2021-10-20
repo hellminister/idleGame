@@ -7,6 +7,7 @@ import idlegame.util.property.BigDecimalProperty;
 import idlegame.util.property.ReadOnlyBigDecimalProperty;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.ObjectExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -14,6 +15,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +51,7 @@ public class Producer implements Prioritable {
     private final BigDecimalProperty productionRate;
     private final BooleanProperty unlocked;
     private ProducerUI ui = null;
+    private final Map<ResourceType, ObjectExpression<BigDecimal>> needs;
 
     public Producer(String name, String description, Set<String> produces, Set<String> consumes) {
         productionRate = new BigDecimalProperty(BigDecimal.valueOf(1.0));
@@ -58,6 +61,13 @@ public class Producer implements Prioritable {
         this.name = Localize.get(name);
         this.description = Localize.get(description);
         unlocked = new SimpleBooleanProperty(true);
+
+        Map<ResourceType, ObjectExpression<BigDecimal>> needsTemp = new HashMap<>();
+
+        consumed.values().forEach(r -> needsTemp.put(r.getType(), new ResourceNeed(r)));
+
+        needs = Collections.unmodifiableMap(needsTemp);
+
         addProducer(this);
     }
 
@@ -72,17 +82,7 @@ public class Producer implements Prioritable {
     }
 
     @Override
-    public Map<ResourceType, BigDecimal> getNeeds() {
-        Map<ResourceType, BigDecimal> needs = new HashMap<>();
-
-        consumed.values().forEach(r -> {
-            BigDecimal need = r.getActualProduction();
-            need = r.effectiveMaxCapacity.get().subtract(r.getAmount().getValue()).min(need);
-            if (need.compareTo(BigDecimal.ZERO) > 0) {
-                needs.put(r.getType(), need);
-            }
-        });
-
+    public Map<ResourceType, ObjectExpression<BigDecimal>> getNeeds() {
         return needs;
     }
 
@@ -256,6 +256,36 @@ public class Producer implements Prioritable {
         @Override
         protected BigDecimal computeValue() {
             return amount.getValue().divide(max.getValue(), 6, RoundingMode.HALF_UP);
+        }
+    }
+
+    private static class ResourceNeed extends ObjectBinding<BigDecimal>{
+
+        private final Binding<BigDecimal> actualProductionP;
+        private final ReadOnlyBigDecimalProperty effectiveMaxCapacity;
+        private final ReadOnlyBigDecimalProperty amount;
+
+
+        public ResourceNeed(ProdResource resource){
+            actualProductionP = resource.actualProductionProperty();
+            effectiveMaxCapacity = resource.getEffectiveMaxCapacity();
+            amount = resource.getAmount();
+
+            bind(actualProductionP, effectiveMaxCapacity, amount);
+        }
+
+
+        /**
+         * Calculates the current value of this binding.
+         * <p>
+         * Classes extending {@code ObjectBinding} have to provide an implementation
+         * of {@code computeValue}.
+         *
+         * @return the current value
+         */
+        @Override
+        protected BigDecimal computeValue() {
+            return effectiveMaxCapacity.getValue().subtract(amount.getValue()).min(actualProductionP.getValue());
         }
     }
 

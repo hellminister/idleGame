@@ -1,12 +1,14 @@
 package idlegame.data;
 
+import javafx.beans.binding.ObjectExpression;
+
 import java.math.BigDecimal;
 import java.util.Map;
 
 public interface Prioritable {
     void preRun();
 
-    Map<ResourceType, BigDecimal> getNeeds();
+    Map<ResourceType, ObjectExpression<BigDecimal>> getNeeds();
 
     Resourceful getResourceful();
 

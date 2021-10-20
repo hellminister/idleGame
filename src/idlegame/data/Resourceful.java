@@ -1,5 +1,7 @@
 package idlegame.data;
 
+import javafx.beans.binding.ObjectExpression;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,10 +56,10 @@ public abstract class Resourceful {
         return obtained;
     }
 
-    public Map<ResourceType, BigDecimal> request(Map<ResourceType, BigDecimal> requires) {
+    public Map<ResourceType, BigDecimal> request(Map<ResourceType, ? extends ObjectExpression<BigDecimal>> requires) {
         Map<ResourceType, BigDecimal> obtained = new HashMap<>();
 
-        requires.forEach((key, value) -> obtained.compute(key, (k, v) -> request(k, value)));
+        requires.forEach((key, value) -> obtained.compute(key, (k, v) -> request(k, value.getValue())));
 
         return obtained;
     }
