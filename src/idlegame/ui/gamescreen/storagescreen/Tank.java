@@ -5,6 +5,7 @@ import idlegame.language.Localize;
 import idlegame.util.Util;
 import idlegame.util.property2.DoubleStringBinding;
 import idlegame.util.textfilter.DoublePercentageTextFilter;
+import idlegame.util.textfilter.DoubleStringConverter;
 import idlegame.util.textfilter.DoubleTextFilter;
 import javafx.scene.Group;
 import javafx.scene.control.*;
@@ -86,7 +87,7 @@ public class Tank extends HBox {
         TextField effectiveCap = new TextField();
         effectiveCap.setEditable(true);
 
-        TextFormatter<Number> effectiveTextFormatter = new TextFormatter<>(new NumberStringConverter(new DecimalFormat("0.000###E0")),
+        TextFormatter<Number> effectiveTextFormatter = new TextFormatter<>(new DoubleStringConverter(new DecimalFormat("0.000###E0")),
                 tank.getEffectiveMaxCapacity().getValue(),
                 new DoubleTextFilter(bd -> bd.compareTo(tank.getMaxCapacity().get()) < 1));
 
