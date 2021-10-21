@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
-public class BigDecimalPercentageStringConverter extends StringConverter<BigDecimal> {
+public class DoublePercentageStringConverter extends StringConverter<Number> {
     private final NumberFormat numberFormat;
 
-    public BigDecimalPercentageStringConverter(NumberFormat nf){
+    public DoublePercentageStringConverter(NumberFormat nf){
         numberFormat = nf;
     }
 
@@ -21,8 +21,8 @@ public class BigDecimalPercentageStringConverter extends StringConverter<BigDeci
      * @return a string representation of the object passed in.
      */
     @Override
-    public String toString(BigDecimal object) {
-        return numberFormat.format(object.multiply(BigDecimal.valueOf(100))) + "%";
+    public String toString(Number object) {
+        return numberFormat.format((Double)object * 100d) + "%";
     }
 
     /**
@@ -33,8 +33,8 @@ public class BigDecimalPercentageStringConverter extends StringConverter<BigDeci
      * @return an object representation of the string passed in.
      */
     @Override
-    public BigDecimal fromString(String string) {
-        return new BigDecimal(string.replaceAll(",", ".").replaceAll("%", "")).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+    public Number fromString(String string) {
+        return Double.parseDouble(string.replaceAll(",", ".").replaceAll("%", "")) / 100;
     }
 
 }

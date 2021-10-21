@@ -1,12 +1,10 @@
 package idlegame.data;
 
 import idlegame.ui.gamescreen.storagescreen.Tank;
-import idlegame.util.property.*;
+import idlegame.util.property2.*;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -16,16 +14,16 @@ import java.util.Objects;
 public class Resource {
 
     protected final ResourceType type;                          // The resource name will never change, it is static
-    protected final BigDecimalProperty amount;
-    protected final BigDecimalProperty maxCapacity;
-    protected final BigDecimal initialMaxCapacity;
+    protected final DoubleProperty amount;
+    protected final DoubleProperty maxCapacity;
+    protected final double initialMaxCapacity;
 
     protected final DoubleBinding fillRatio;
 
-    protected final BigDecimalProperty effectiveMaxCapacity;
+    protected final DoubleProperty effectiveMaxCapacity;
     protected final DoubleProperty effectiveMaxCapacityRatio;
     protected final BooleanProperty effectiveRatioToggle;
-    protected final BigDecimalBinding weightProperty;
+    protected final DoubleBinding weightProperty;
     protected boolean countStore = true;
     protected boolean countRequest = true;
     protected boolean invert = false;
@@ -33,7 +31,7 @@ public class Resource {
     protected Tank tankUI = null;
 
 
-    protected final BigDecimalPerSecondProperty perSecond;
+    protected final DoublePerSecondProperty perSecond;
 
     public Resource(String creationLine, String... otherTags){
         this(concat(creationLine.split(" "), otherTags));
@@ -49,16 +47,16 @@ public class Resource {
     }
 
     private Resource(String[] s) {
-        this(ResourceType.get(s[0]), new BigDecimal(s[1]), Arrays.copyOfRange(s, 2, s.length));
+        this(ResourceType.get(s[0]), Double.parseDouble(s[1]), Arrays.copyOfRange(s, 2, s.length));
     }
 
     // TODO treat tags
-    public Resource(ResourceType type, BigDecimal maxCapacityInitial, String... tags) {
+    public Resource(ResourceType type, double maxCapacityInitial, String... tags) {
         this.type = type;
-        this.amount = new BigDecimalProperty(BigDecimal.ZERO);
+        this.amount = new SimpleDoubleProperty(0d);
         this.initialMaxCapacity = maxCapacityInitial;
-        this.maxCapacity = new BigDecimalProperty(maxCapacityInitial);
-        perSecond = new BigDecimalPerSecondProperty();
+        this.maxCapacity = new SimpleDoubleProperty(maxCapacityInitial);
+        perSecond = new DoublePerSecondProperty();
 
         fillRatio = new DoubleBinding() {
             {
@@ -67,25 +65,25 @@ public class Resource {
             }
             @Override
             protected double computeValue() {
-                return amount.get().divide(maxCapacity.get(), 10, RoundingMode.HALF_UP).doubleValue();
+                return amount.get() / maxCapacity.get();
             }
         };
 
-        effectiveMaxCapacity = new BigDecimalProperty(maxCapacity.getValue());
+        effectiveMaxCapacity = new SimpleDoubleProperty(maxCapacity.getValue());
         effectiveMaxCapacityRatio = new SimpleDoubleProperty(1.0);
         effectiveRatioToggle = new SimpleBooleanProperty(true);
 
         maxCapacity.addListener((mc, oldV, newV) -> {
             if (effectiveRatioToggle.get()){
-                effectiveMaxCapacity.set(newV.multiply(BigDecimal.valueOf(effectiveMaxCapacityRatio.get())));
+                effectiveMaxCapacity.set((Double)newV * effectiveMaxCapacityRatio.get());
             } else {
-                if (effectiveMaxCapacity.get().compareTo(newV) >= 1){
-                    effectiveMaxCapacity.set(newV);
+                if (effectiveMaxCapacity.get() > ((Double)newV)){
+                    effectiveMaxCapacity.set((Double)newV);
                 }
-                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get().divide(newV, 10, RoundingMode.HALF_UP).doubleValue());
+                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get() / ((Double)newV));
             }
 
-            if (amount.get().compareTo(effectiveMaxCapacity.get())>= 0){
+            if (amount.get() >= (effectiveMaxCapacity.get())){
                 amount.set(effectiveMaxCapacity.get());
             }
         });
@@ -93,8 +91,8 @@ public class Resource {
         effectiveMaxCapacityRatio.addListener((ratio, oldV, newV) ->{
             // probably a useless check
             if (!Objects.equals(oldV, newV)){
-                effectiveMaxCapacity.set(maxCapacity.get().multiply(BigDecimal.valueOf((Double) newV)));
-                if (amount.get().compareTo(effectiveMaxCapacity.get())>= 0){
+                effectiveMaxCapacity.set(maxCapacity.get()* ((Double) newV));
+                if (amount.get() >= (effectiveMaxCapacity.get())){
                     amount.set(effectiveMaxCapacity.get());
                 }
             }
@@ -102,28 +100,28 @@ public class Resource {
 
         effectiveMaxCapacity.addListener((ratio, oldV, newV) ->{
             if (!Objects.equals(oldV, newV)){
-                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get().divide(maxCapacity.get(), 10, RoundingMode.HALF_UP).doubleValue());
-                if (amount.get().compareTo(effectiveMaxCapacity.get())>= 0){
+                effectiveMaxCapacityRatio.set(effectiveMaxCapacity.get() / (maxCapacity.get()));
+                if (amount.get()>=(effectiveMaxCapacity.get())){
                     amount.set(effectiveMaxCapacity.get());
                 }
             }
         });
 
-        weightProperty = new BigDecimalBinding() {
-            final BigDecimalStringProperty asString;
+        weightProperty = new DoubleBinding() {
+            final DoubleStringBinding asString;
 
             {
                 bind(amount, type.getWeight());
 
                 NumberFormat formatter = new DecimalFormat("0.000###E0");
-                asString = new BigDecimalStringProperty(formatter, this);
+                asString = new DoubleStringBinding(formatter, this);
             }
             @Override
-            protected BigDecimal computeValue() {
-                return amount.get().multiply(type.getWeight().getValue());
+            protected double computeValue() {
+                return amount.get() * ((Double)type.getWeight().getValue());
             }
 
-            public BigDecimalStringProperty asStringProperty() {
+            public DoubleStringBinding asStringProperty() {
                 return asString;
             }
         };
@@ -137,7 +135,7 @@ public class Resource {
     }
 
 
-    public BigDecimalPerSecondProperty perSecondProperty() {
+    public DoublePerSecondProperty perSecondProperty() {
         return perSecond;
     }
 
@@ -146,70 +144,70 @@ public class Resource {
      * @param toStore amount to be stored
      * @return the amount exceeding max capacity
      */
-    public BigDecimal store(BigDecimal toStore){
-        BigDecimal excess;
+    public double store(double toStore){
+        double excess;
         if (isAtMaxCapacity()){
             excess = toStore;
         } else {
 
-            BigDecimal sum = amount.get().add(toStore);
+            double sum = amount.get() + (toStore);
 
-            if (sum.compareTo(effectiveMaxCapacity.get()) <= 0) {
+            if (sum <= (effectiveMaxCapacity.get())) {
                 amount.setValue(sum);
-                excess = BigDecimal.ZERO;
+                excess = 0d;
             } else {
                 amount.setValue(effectiveMaxCapacity.getValue());
-                excess = sum.subtract(effectiveMaxCapacity.get());
+                excess = sum - (effectiveMaxCapacity.get());
             }
         }
-        BigDecimal actualStore = toStore.subtract(excess);
+        double actualStore = toStore - excess;
         if (countStore) {
-            perSecond.add(invert ? actualStore.negate() : actualStore);
+            perSecond.addNewValue(invert ? actualStore * -1 : actualStore);
         }
         return excess;
     }
 
     public boolean isAtMaxCapacity() {
-        return amount.get().compareTo(effectiveMaxCapacity.get()) >= 0;
+        return amount.get() >= (effectiveMaxCapacity.get());
     }
 
     // rename to realMaxCapacity, and add equivalent methode for effective capacity
-    public boolean isAtLeastOfCapacity(BigDecimal value) {
-        return amount.get().compareTo(maxCapacity.get().multiply(value)) >= 0;
+    public boolean isAtLeastOfCapacity(double value) {
+        return amount.get() >= (maxCapacity.get() * (value));
     }
 
     /**
      * @param requested amount to be retrieved
      * @return actual amount retrieved
      */
-    public BigDecimal request(BigDecimal requested){
-        BigDecimal retrieved;
+    public double request(double requested){
+        double retrieved;
 
         if (isEmpty()){
-            retrieved =  BigDecimal.ZERO;
+            retrieved =  0d;
         } else {
-            BigDecimal balance = amount.get().subtract(requested);
+            double balance = amount.get() - (requested);
 
-            if (balance.compareTo(BigDecimal.ZERO) >= 0) {
+            if (balance >= (0)) {
                 amount.setValue(balance);
-                retrieved =  requested;
+                retrieved = requested;
             } else {
                 balance = amount.get();
-                amount.setValue(BigDecimal.ZERO);
+                amount.setValue(0d);
                 retrieved = balance;
             }
         }
         if (countRequest){
-            perSecond.add(invert ? retrieved : retrieved.negate());
+            perSecond.addNewValue(invert ? retrieved : retrieved * -1);
         }
         return retrieved;
     }
 
     public boolean isEmpty() {
-        return amount.get().compareTo(BigDecimal.ZERO) <= 0;
+        return amount.get() <= 0;
     }
 
-    public BigDecimalProperty getMaxCapacity() {
+    public ReadOnlyDoubleProperty getMaxCapacity() {
         return maxCapacity;
     }
 
@@ -217,12 +215,8 @@ public class Resource {
         return type.getName();
     }
 
-    public ReadOnlyBigDecimalProperty getAmount() {
+    public ReadOnlyDoubleProperty getAmount() {
         return amount;
-    }
-
-    public String toString(){
-        return type.getName() + " -> " + amount.asStringProperty().get() + "  /  " + maxCapacity.asStringProperty().get();
     }
 
     public DoubleBinding getFillRatio(){
@@ -233,7 +227,7 @@ public class Resource {
         return type;
     }
 
-    public BigDecimalProperty getEffectiveMaxCapacity() {
+    public DoubleProperty getEffectiveMaxCapacity() {
         return effectiveMaxCapacity;
     }
 
@@ -245,7 +239,7 @@ public class Resource {
         return effectiveRatioToggle;
     }
 
-    public BigDecimalBinding getWeight() {
+    public DoubleBinding getWeight() {
         return weightProperty;
     }
 

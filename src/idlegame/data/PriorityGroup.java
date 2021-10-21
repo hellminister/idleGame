@@ -1,14 +1,12 @@
 package idlegame.data;
 
 
-import idlegame.util.property.BigDecimalSum;
-import javafx.beans.binding.ObjectExpression;
+import idlegame.util.property2.DoubleSum;
+import javafx.beans.binding.DoubleExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.VBox;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,26 +18,26 @@ import java.util.Map;
 public class PriorityGroup extends VBox {
     private final ObservableList<Prioritable> group;
     private ExecutionType executionType;
-    private final Map<Prioritable, Map<ResourceType, ObjectExpression<BigDecimal>>> neededResourcesPerTask;
-    private final Map<Resourceful, Map<ResourceType, BigDecimalSum>> neededResourcesPerLocation;
-    private final Map<ResourceType, BigDecimalSum> totalNeededResources;
+    private final Map<Prioritable, Map<ResourceType, DoubleExpression>> neededResourcesPerTask;
+    private final Map<Resourceful, Map<ResourceType, DoubleSum>> neededResourcesPerLocation;
+    private final Map<ResourceType, DoubleSum> totalNeededResources;
 
 
     public PriorityGroup() {
         group = FXCollections.observableArrayList();
         neededResourcesPerTask = new HashMap<>();
         neededResourcesPerLocation = new HashMap<>();
-        executionType = ExecutionType.PARALLEL;
+        executionType = ExecutionType.SEQUENTIAL;
 
         totalNeededResources = Collections.unmodifiableMap(generateRessourceSumMap());
     }
 
-    private Map<ResourceType, BigDecimalSum> generateRessourceSumMap() {
-        final Map<ResourceType, BigDecimalSum> sumMap;
+    private Map<ResourceType, DoubleSum> generateRessourceSumMap() {
+        final Map<ResourceType, DoubleSum> sumMap;
         sumMap = new HashMap<>();
 
         for (ResourceType type : ResourceType.getAll().values()){
-            sumMap.put(type, new BigDecimalSum());
+            sumMap.put(type, new DoubleSum());
         }
         return sumMap;
     }
@@ -51,13 +49,13 @@ public class PriorityGroup extends VBox {
 
         var perLocation = neededResourcesPerLocation.computeIfAbsent(task.getResourceful(), (k) -> {
             var map = generateRessourceSumMap();
-            for (Map.Entry<ResourceType, BigDecimalSum> s : map.entrySet()){
+            for (Map.Entry<ResourceType, DoubleSum> s : map.entrySet()){
                 totalNeededResources.get(s.getKey()).add(s.getValue());
             }
             return Collections.unmodifiableMap(map);
         });
 
-        for (Map.Entry<ResourceType, ObjectExpression<BigDecimal>> s2 : needs.entrySet()){
+        for (Map.Entry<ResourceType, DoubleExpression> s2 : needs.entrySet()){
             perLocation.get(s2.getKey()).add(s2.getValue());
         }
     }
@@ -68,7 +66,7 @@ public class PriorityGroup extends VBox {
 
         var perLocation = neededResourcesPerLocation.get(task.getResourceful());
 
-        for (Map.Entry<ResourceType, ObjectExpression<BigDecimal>> s2 : resources.entrySet()){
+        for (Map.Entry<ResourceType, DoubleExpression> s2 : resources.entrySet()){
             perLocation.get(s2.getKey()).remove(s2.getValue());
         }
     }
@@ -86,31 +84,31 @@ public class PriorityGroup extends VBox {
         SEQUENTIAL((group) -> {
             for (Prioritable task : group.group){
             task.preRun();
-            Map<ResourceType, ObjectExpression<BigDecimal>> requires = task.getNeeds();
-            Map<ResourceType, BigDecimal> obtained = task.getResourceful().request(requires);
+            Map<ResourceType, DoubleExpression> requires = task.getNeeds();
+            Map<ResourceType, Double> obtained = task.getResourceful().request(requires);
             task.receive(obtained);
             }
         }),
         PARALLEL((group) -> {
-            Map<ResourceType, BigDecimal> ratios = new HashMap<>();
-            Map<ResourceType, BigDecimal> obtainedCumulative = new HashMap<>();
+            Map<ResourceType, Double> ratios = new HashMap<>();
+            Map<ResourceType, Double> obtainedCumulative = new HashMap<>();
             for (Prioritable task : group.group){
                 task.preRun();
             }
 
-            for (Map.Entry<Resourceful, Map<ResourceType, BigDecimalSum>> needs : group.neededResourcesPerLocation.entrySet()){
+            for (Map.Entry<Resourceful, Map<ResourceType, DoubleSum>> needs : group.neededResourcesPerLocation.entrySet()){
                 var obtained = needs.getKey().request(needs.getValue());
-                obtained.forEach((k, v) -> obtainedCumulative.merge(k, v, BigDecimal::add));
+                obtained.forEach((k, v) -> obtainedCumulative.merge(k, v, Double::sum));
             }
 
-            for (Map.Entry<ResourceType, BigDecimal> gotten : obtainedCumulative.entrySet()){
+            for (Map.Entry<ResourceType, Double> gotten : obtainedCumulative.entrySet()){
                 var total = group.totalNeededResources.get(gotten.getKey()).getValue();
-                ratios.put(gotten.getKey(), total.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : gotten.getValue().divide(total, 6, RoundingMode.HALF_UP));
+                ratios.put(gotten.getKey(), total == 0 ? 0d : gotten.getValue() / total);
             }
 
             for (Prioritable task : group.group){
-                Map<ResourceType, BigDecimal> sends = new HashMap<>();
-                group.neededResourcesPerTask.get(task).forEach((k, v) -> sends.put(k, ratios.get(k).multiply(v.getValue())));
+                Map<ResourceType, Double> sends = new HashMap<>();
+                group.neededResourcesPerTask.get(task).forEach((k, v) -> sends.put(k, ratios.get(k) * (v.getValue())));
                 task.receive(sends);
             }
 

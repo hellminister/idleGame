@@ -1,40 +1,38 @@
-package idlegame.util.property;
+package idlegame.util.property2;
 
-import javafx.beans.binding.ObjectExpression;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.DoubleExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
 
-public class BigDecimalSum extends BigDecimalBinding{
+public class DoubleSum extends DoubleBinding {
+    private final DoubleStringBinding asString;
 
-    private final BigDecimalStringProperty asString;
+    private final ObservableSet<DoubleExpression> toAdd;
 
-    private final ObservableSet<ObjectExpression<BigDecimal>> toAdd;
-
-    public BigDecimalSum(){
+    public DoubleSum(){
         toAdd = FXCollections.observableSet(new HashSet<>());
         bind(toAdd); // when a value is added or removed from the set, this is recalculated
 
         NumberFormat formatter = new DecimalFormat("0.000###E0");
-        asString = new BigDecimalStringProperty(formatter, this);
+        asString = new DoubleStringBinding(formatter, this);
     }
 
-    public void add(ObjectExpression<BigDecimal> value){
+    public void add(DoubleExpression value){
         bind(value);
         toAdd.add(value);
     }
 
-    public void remove(ObjectExpression<BigDecimal> value){
+    public void remove(DoubleExpression value){
         unbind(value);
         toAdd.remove(value);
     }
 
-    @Override
-    public BigDecimalStringProperty asStringProperty() {
+    public DoubleStringBinding asStringProperty() {
         return asString;
     }
 
@@ -47,7 +45,8 @@ public class BigDecimalSum extends BigDecimalBinding{
      * @return the current value
      */
     @Override
-    protected BigDecimal computeValue() {
-        return toAdd.isEmpty() ? BigDecimal.ZERO : toAdd.stream().reduce(BigDecimal.ZERO, (a, b) -> a.add(b.getValue()), BigDecimal::add);
+    protected double computeValue() {
+        return toAdd.isEmpty() ? 0d : toAdd.stream().reduce(0d, (a, b) -> a + b.getValue(), Double::sum);
     }
+
 }

@@ -3,18 +3,12 @@ package idlegame.data;
 
 import idlegame.ui.gamescreen.producerscreen.ProducerUI;
 import idlegame.language.Localize;
-import idlegame.util.property.BigDecimalProperty;
-import idlegame.util.property.ReadOnlyBigDecimalProperty;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.DoubleExpression;
 import javafx.beans.binding.ObjectExpression;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,13 +42,13 @@ public class Producer implements Prioritable {
     private final Map<ResourceType, ProdResource> produced;
     private final Map<ResourceType, ProdResource> consumed;
     private Resourceful storage;
-    private final BigDecimalProperty productionRate;
+    private final DoubleProperty productionRate;
     private final BooleanProperty unlocked;
     private ProducerUI ui = null;
-    private final Map<ResourceType, ObjectExpression<BigDecimal>> needs;
+    private final Map<ResourceType, DoubleExpression> needs;
 
     public Producer(String name, String description, Set<String> produces, Set<String> consumes) {
-        productionRate = new BigDecimalProperty(BigDecimal.valueOf(1.0));
+        productionRate = new SimpleDoubleProperty(1.0);
         produced = produces.stream().map(s -> new ProdResource(s, productionRate, false, true, true)).collect(Collectors.toMap(Resource::getType, Function.identity()));
         consumed = consumes.stream().map(s -> new ProdResource(s, productionRate, true, false, true)).collect(Collectors.toMap(Resource::getType, Function.identity()));
 
@@ -62,7 +56,7 @@ public class Producer implements Prioritable {
         this.description = Localize.get(description);
         unlocked = new SimpleBooleanProperty(true);
 
-        Map<ResourceType, ObjectExpression<BigDecimal>> needsTemp = new HashMap<>();
+        Map<ResourceType, DoubleExpression> needsTemp = new HashMap<>();
 
         consumed.values().forEach(r -> needsTemp.put(r.getType(), new ResourceNeed(r)));
 
@@ -82,7 +76,7 @@ public class Producer implements Prioritable {
     }
 
     @Override
-    public Map<ResourceType, ObjectExpression<BigDecimal>> getNeeds() {
+    public Map<ResourceType, DoubleExpression> getNeeds() {
         return needs;
     }
 
@@ -92,9 +86,9 @@ public class Producer implements Prioritable {
     }
 
     @Override
-    public void receive(Map<ResourceType, BigDecimal> obtained) {
+    public void receive(Map<ResourceType, Double> obtained) {
         // second lets fill the producer
-        consumed.values().forEach(r -> r.store(obtained.getOrDefault(r.getType(), BigDecimal.ZERO)));
+        consumed.values().forEach(r -> r.store(obtained.getOrDefault(r.getType(), 0d)));
 
         // last, if the producer is at least at production rate capacity, and the produced resources are not all full, generate the resources, and empty the producers tanks by
         // the production rate
@@ -118,15 +112,15 @@ public class Producer implements Prioritable {
     }
 
     // from locale to producer
-    private void transfer(Resourceful from, Resource to, BigDecimal amount){
-        BigDecimal took = from.request(to.getType(), amount);
+    private void transfer(Resourceful from, Resource to, double amount){
+        double took = from.request(to.getType(), amount);
         took = to.store(took);
         from.store(to.getType(), took);  // puts back what cannot be stored
     }
 
     // from producer to locale
-    private void transfer(Resource from, Resourceful to, BigDecimal amount){
-        BigDecimal took = from.request(amount);
+    private void transfer(Resource from, Resourceful to, double amount){
+        double took = from.request(amount);
         took = to.store(from.getType(), took);
         from.store(took);  // puts back what cannot be stored
     }
@@ -166,7 +160,7 @@ public class Producer implements Prioritable {
         return consumed;
     }
 
-    public BigDecimalProperty getProductionRate() {
+    public DoubleProperty getProductionRate() {
         return productionRate;
     }
 
@@ -183,7 +177,7 @@ public class Producer implements Prioritable {
         private final ProductionBinding actualProduction;
         private final FillProductionBinding productionFilledRatio;
 
-        public ProdResource(String resourceString, ReadOnlyBigDecimalProperty prodRate, boolean countStore, boolean countRequest, boolean invert) {
+        public ProdResource(String resourceString, ReadOnlyDoubleProperty prodRate, boolean countStore, boolean countRequest, boolean invert) {
             super(resourceString);
             this.countRequest = countRequest;
             this.countStore = countStore;
@@ -193,25 +187,25 @@ public class Producer implements Prioritable {
         }
 
 
-        public BigDecimal getActualProduction(){
+        public double getActualProduction(){
             return actualProduction.getValue();
         }
-        public BigDecimal getProductionFilledRatio(){ return productionFilledRatio.getValue();}
+        public double getProductionFilledRatio(){ return productionFilledRatio.getValue();}
 
-        public Binding<BigDecimal> actualProductionProperty() {
+        public DoubleBinding actualProductionProperty() {
             return actualProduction;
         }
 
-        public Binding<BigDecimal> productionFilledRatioProperty() {
+        public DoubleBinding productionFilledRatioProperty() {
             return productionFilledRatio;
         }
     }
 
-    private static class ProductionBinding extends ObjectBinding<BigDecimal> {
-        private final ReadOnlyBigDecimalProperty value;
-        private final ReadOnlyBigDecimalProperty mod;
+    private static class ProductionBinding extends DoubleBinding {
+        private final ReadOnlyDoubleProperty value;
+        private final ReadOnlyDoubleProperty mod;
 
-        public ProductionBinding(ReadOnlyBigDecimalProperty value, ReadOnlyBigDecimalProperty mod) {
+        public ProductionBinding(ReadOnlyDoubleProperty value, ReadOnlyDoubleProperty mod) {
             this.value = value;
             this.mod = mod;
 
@@ -228,16 +222,16 @@ public class Producer implements Prioritable {
          * @return the current value
          */
         @Override
-        protected BigDecimal computeValue() {
-            return value.getValue().multiply(mod.getValue());
+        protected double computeValue() {
+            return value.getValue() * mod.getValue();
         }
     }
 
-    private static class FillProductionBinding extends ObjectBinding<BigDecimal> {
+    private static class FillProductionBinding extends DoubleBinding {
         private final ProductionBinding max;
-        private final ReadOnlyBigDecimalProperty amount;
+        private final ReadOnlyDoubleProperty amount;
 
-        public FillProductionBinding(ProductionBinding max, ReadOnlyBigDecimalProperty amount) {
+        public FillProductionBinding(ProductionBinding max, ReadOnlyDoubleProperty amount) {
             this.max = max;
             this.amount = amount;
 
@@ -254,16 +248,16 @@ public class Producer implements Prioritable {
          * @return the current value
          */
         @Override
-        protected BigDecimal computeValue() {
-            return amount.getValue().divide(max.getValue(), 6, RoundingMode.HALF_UP);
+        protected double computeValue() {
+            return amount.getValue() / max.getValue();
         }
     }
 
-    private static class ResourceNeed extends ObjectBinding<BigDecimal>{
+    private static class ResourceNeed extends DoubleBinding {
 
-        private final Binding<BigDecimal> actualProductionP;
-        private final ReadOnlyBigDecimalProperty effectiveMaxCapacity;
-        private final ReadOnlyBigDecimalProperty amount;
+        private final DoubleBinding actualProductionP;
+        private final ReadOnlyDoubleProperty effectiveMaxCapacity;
+        private final ReadOnlyDoubleProperty amount;
 
 
         public ResourceNeed(ProdResource resource){
@@ -284,8 +278,8 @@ public class Producer implements Prioritable {
          * @return the current value
          */
         @Override
-        protected BigDecimal computeValue() {
-            return effectiveMaxCapacity.getValue().subtract(amount.getValue()).min(actualProductionP.getValue());
+        protected double computeValue() {
+            return effectiveMaxCapacity.getValue() - Double.min(amount.getValue(), actualProductionP.getValue());
         }
     }
 

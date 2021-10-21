@@ -1,13 +1,13 @@
 package idlegame.util.textfilter;
 
-public class TextDoublePercentageFilter extends TextFilter<Double> {
+public class DoublePercentageTextFilter extends TextFilter<Double> {
 
-    public TextDoublePercentageFilter(){
+    public DoublePercentageTextFilter(){
         super("[0-9]{1,13}(,[0-9]*)?%");
     }
 
 
-    public TextDoublePercentageFilter(ValueCondition<Double> vc){
+    public DoublePercentageTextFilter(ValueCondition<Double> vc){
         super("[0-9]{1,13}(,[0-9]*)?%", vc, newString -> Double.parseDouble(newString.replaceAll("%", "").replaceAll(",", ".")));
     }
 }

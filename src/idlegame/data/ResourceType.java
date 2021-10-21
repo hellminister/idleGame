@@ -1,13 +1,13 @@
 package idlegame.data;
 
 import idlegame.language.Localize;
-import idlegame.util.property.BigDecimalProperty;
-import idlegame.util.property.ReadOnlyBigDecimalProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,7 +27,7 @@ public class ResourceType {
             while (line != null){
                 String[] info = line.split(" ");
 
-                ResourceType rt = new ResourceType(info[0], new BigDecimal(info[1]));
+                ResourceType rt = new ResourceType(info[0], Double.parseDouble(info[1]));
                 resourceTypesTemp.put(info[0], rt);
 
                 line = br.readLine();
@@ -47,17 +47,17 @@ public class ResourceType {
 
     private final String id;
     private final ReadOnlyStringProperty name;
-    private final BigDecimal initWeightPerUnit;
-    private final BigDecimalProperty weightPerUnit;
+    private final double initWeightPerUnit;
+    private final DoubleProperty weightPerUnit;
 
     private final Set<Resource> tanks;
 
 
-    private ResourceType(String id, BigDecimal weightPerUnit) {
+    private ResourceType(String id, double weightPerUnit) {
         this.id = id;
         this.name = Localize.get(id);
         initWeightPerUnit = weightPerUnit;
-        this.weightPerUnit = new BigDecimalProperty(weightPerUnit);
+        this.weightPerUnit = new SimpleDoubleProperty(weightPerUnit);
         tanks = new HashSet<>();
     }
 
@@ -73,7 +73,7 @@ public class ResourceType {
         return name;
     }
 
-    public ReadOnlyBigDecimalProperty getWeight(){
+    public ReadOnlyDoubleProperty getWeight(){
         return weightPerUnit;
     }
 

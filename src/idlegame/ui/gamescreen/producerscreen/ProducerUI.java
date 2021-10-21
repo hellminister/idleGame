@@ -4,8 +4,8 @@ import idlegame.data.Producer;
 import idlegame.ui.gamescreen.storagescreen.Tank;
 import idlegame.language.Localize;
 import idlegame.util.Util;
-import idlegame.util.textfilter.BigDecimalPercentageStringConverter;
-import idlegame.util.textfilter.BigDecimalPercentageTextFilter;
+import idlegame.util.textfilter.DoublePercentageStringConverter;
+import idlegame.util.textfilter.DoublePercentageTextFilter;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
@@ -14,7 +14,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class ProducerUI extends HBox {
@@ -35,9 +34,9 @@ public class ProducerUI extends HBox {
         TextField pRate = new TextField();
         pRate.setEditable(true);
 
-        TextFormatter<BigDecimal> pRateTextFormatter = new TextFormatter<>(new BigDecimalPercentageStringConverter(new DecimalFormat("##0.#")),
+        TextFormatter<Number> pRateTextFormatter = new TextFormatter<>(new DoublePercentageStringConverter(new DecimalFormat("##0.#")),
                 producer.getProductionRate().getValue(),
-                new BigDecimalPercentageTextFilter(d -> (d.compareTo(BigDecimal.ZERO) >= 0 && d.compareTo(BigDecimal.valueOf(100)) <= 0)));
+                new DoublePercentageTextFilter(d -> (d >= 0d && d <= 100d)));
         pRateTextFormatter.valueProperty().bindBidirectional(producer.getProductionRate());
 
         pRate.setTextFormatter(pRateTextFormatter);

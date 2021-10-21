@@ -1,8 +1,7 @@
 package idlegame.data;
 
-import javafx.beans.binding.ObjectExpression;
+import javafx.beans.binding.DoubleExpression;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,40 +30,40 @@ public abstract class Resourceful {
         return tanks.getResource(type);
     }
 
-    public BigDecimal store(ResourceType type,  BigDecimal amount){
-        BigDecimal remains = tanks.getResource(type).store(amount);
+    public double store(ResourceType type,  double amount){
+        double remains = tanks.getResource(type).store(amount);
 
-        if (remains.compareTo(BigDecimal.ZERO) > 0 && otherLocation != null){
+        if (remains > 0 && otherLocation != null){
             remains = otherLocation.storeOnlyHere(type, remains);
         }
 
         return remains;
     }
 
-    public BigDecimal storeOnlyHere(ResourceType type, BigDecimal amount){
+    public double storeOnlyHere(ResourceType type, double amount){
         return tanks.getResource(type).store(amount);
     }
 
-    public BigDecimal request(ResourceType type,  BigDecimal amount){
-        BigDecimal obtained = tanks.getResource(type).request(amount);
+    public double request(ResourceType type,  double amount){
+        double obtained = tanks.getResource(type).request(amount);
 
-        if (obtained.compareTo(amount) < 0 && otherLocation != null){
-            BigDecimal missing = amount.subtract(obtained);
-            obtained = obtained.add(otherLocation.requestOnlyHere(type, missing));
+        if (obtained < (amount) && otherLocation != null){
+            double missing = amount - (obtained);
+            obtained = obtained + (otherLocation.requestOnlyHere(type, missing));
         }
 
         return obtained;
     }
 
-    public Map<ResourceType, BigDecimal> request(Map<ResourceType, ? extends ObjectExpression<BigDecimal>> requires) {
-        Map<ResourceType, BigDecimal> obtained = new HashMap<>();
+    public Map<ResourceType, Double> request(Map<ResourceType, ? extends DoubleExpression> requires) {
+        Map<ResourceType, Double> obtained = new HashMap<>();
 
         requires.forEach((key, value) -> obtained.compute(key, (k, v) -> request(k, value.getValue())));
 
         return obtained;
     }
 
-    public BigDecimal requestOnlyHere(ResourceType type, BigDecimal amount){
+    public double requestOnlyHere(ResourceType type, double amount){
         return tanks.getResource(type).request(amount);
     }
 

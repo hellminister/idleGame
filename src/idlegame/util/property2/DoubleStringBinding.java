@@ -1,16 +1,15 @@
-package idlegame.util.property;
+package idlegame.util.property2;
 
-import javafx.beans.binding.ObjectExpression;
+import javafx.beans.binding.DoubleExpression;
 import javafx.beans.binding.StringBinding;
 
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 
-public class BigDecimalStringProperty extends StringBinding {
+public class DoubleStringBinding extends StringBinding {
     private final NumberFormat formatter;
-    private final ObjectExpression<BigDecimal> value;
+    private final DoubleExpression value;
 
-    public BigDecimalStringProperty(NumberFormat formatter, ObjectExpression<BigDecimal> value) {
+    public DoubleStringBinding(NumberFormat formatter, DoubleExpression value) {
         this.formatter = formatter;
         this.value = value;
         this.bind(this.value);

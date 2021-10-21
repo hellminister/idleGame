@@ -3,17 +3,18 @@ package idlegame.ui.gamescreen.storagescreen;
 import idlegame.data.Resource;
 import idlegame.language.Localize;
 import idlegame.util.Util;
-import idlegame.util.textfilter.BigDecimalStringConverter;
-import idlegame.util.textfilter.BigDecimalTextFilter;
-import idlegame.util.textfilter.TextDoublePercentageFilter;
+import idlegame.util.property2.DoubleStringBinding;
+import idlegame.util.textfilter.DoublePercentageTextFilter;
+import idlegame.util.textfilter.DoubleTextFilter;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.util.converter.NumberStringConverter;
 import javafx.util.converter.PercentageStringConverter;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class Tank extends HBox {
     private static final String TANK_STYLE_SHEET_PATH = Util.getFilePathString("resources/stylesheet/Tank.css");
@@ -51,7 +52,9 @@ public class Tank extends HBox {
         amountNameLabel.getStyleClass().add("tank-section-label");
 
         Label amountLabel = new Label();
-        amountLabel.textProperty().bind(tank.getAmount().asStringProperty());
+        NumberFormat formatter = new DecimalFormat("0.000###E0");
+        var amountString = new DoubleStringBinding(formatter, tank.getAmount());
+        amountLabel.textProperty().bind(amountString);
         amountLabel.getStyleClass().add("tank-value-label");
 
         Label maxCapNameLabel = new Label();
@@ -60,7 +63,8 @@ public class Tank extends HBox {
 
 
         Label maxCapLabel = new Label();
-        maxCapLabel.textProperty().bind(tank.getMaxCapacity().asStringProperty());
+        var maxCapacityString = new DoubleStringBinding(formatter, tank.getMaxCapacity());
+        maxCapLabel.textProperty().bind(maxCapacityString);
         maxCapLabel.getStyleClass().add("tank-value-label");
 
         Label effectiveNameLabel = new Label();
@@ -72,7 +76,7 @@ public class Tank extends HBox {
 
         TextFormatter<Number> ratioTextFormatter = new TextFormatter<>(new PercentageStringConverter(new DecimalFormat("##0.0###%")),
                 tank.getEffectiveMaxCapacityRatio().doubleValue(),
-                new TextDoublePercentageFilter(d -> d <= 100));
+                new DoublePercentageTextFilter(d -> d <= 100));
         ratioTextFormatter.valueProperty().bindBidirectional(tank.getEffectiveMaxCapacityRatio());
 
         effectiveCapRatio.setTextFormatter(ratioTextFormatter);
@@ -82,9 +86,9 @@ public class Tank extends HBox {
         TextField effectiveCap = new TextField();
         effectiveCap.setEditable(true);
 
-        TextFormatter<BigDecimal> effectiveTextFormatter = new TextFormatter<>(new BigDecimalStringConverter(new DecimalFormat("0.000###E0")),
+        TextFormatter<Number> effectiveTextFormatter = new TextFormatter<>(new NumberStringConverter(new DecimalFormat("0.000###E0")),
                 tank.getEffectiveMaxCapacity().getValue(),
-                new BigDecimalTextFilter(bd -> bd.compareTo(tank.getMaxCapacity().get()) < 1));
+                new DoubleTextFilter(bd -> bd.compareTo(tank.getMaxCapacity().get()) < 1));
 
         effectiveCap.setTextFormatter(effectiveTextFormatter);
         effectiveTextFormatter.valueProperty().bindBidirectional(tank.getEffectiveMaxCapacity());
@@ -108,7 +112,8 @@ public class Tank extends HBox {
         weightNameLabel.getStyleClass().add("tank-section-label");
 
         Label weightLabel = new Label();
-        weightLabel.textProperty().bind(tank.getWeight().asStringProperty());
+        var weightString = new DoubleStringBinding(formatter, tank.getWeight());
+        weightLabel.textProperty().bind(weightString);
         weightLabel.getStyleClass().add("tank-value-label");
 
         Label deltaLabel = new Label();
